@@ -19,8 +19,10 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface as BaseUserInterface;
 
-interface UserInterface extends IdentifiableInterface, BaseUserInterface, PasswordAuthenticatedUserInterface
+interface UserInterface extends IdentifiableInterface, CreatedAtInterface, BaseUserInterface, PasswordAuthenticatedUserInterface
 {
+    public const ROLE_USER = 'ROLE_USER';
+
     public function getEmail(): string;
 
     public function setEmail(string $email): void;

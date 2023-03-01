@@ -14,9 +14,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Model\CreatedAtTrait;
 use App\Model\IdentifiableTrait;
 use App\Model\TaskInterface;
 use App\Model\TaskTimeEntryInterface;
+use App\Model\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,17 +28,26 @@ use Doctrine\ORM\Mapping as ORM;
 class Task implements TaskInterface
 {
     use IdentifiableTrait;
+    use CreatedAtTrait;
 
     /**
      * @var Collection<TaskTimeEntryInterface>
      */
     #[ORM\OneToMany(mappedBy: 'task', targetEntity: TaskTimeEntry::class)]
-    private Collection $taskTimeEntries;
+    private Collection $timeEntries;
+
+    /**
+     * @var Collection<UserInterface>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    private Collection $assignedUsers;
 
     public function __construct(
         #[ORM\Column]
         private string $name,
     ) {
+        $this->timeEntries = new ArrayCollection();
+        $this->assignedUsers = new ArrayCollection();
     }
 
     public function getName(): string
@@ -51,18 +63,36 @@ class Task implements TaskInterface
     /**
      * @return Collection<TaskTimeEntryInterface>
      */
-    public function getTaskTimeEntries(): Collection
+    public function getTimeEntries(): Collection
     {
-        return $this->taskTimeEntries;
+        return $this->timeEntries;
     }
 
-    public function addTaskTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void
+    public function addTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void
     {
-        $this->taskTimeEntries->add($taskTimeEntry);
+        $this->timeEntries->add($taskTimeEntry);
     }
 
-    public function removeTaskTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void
+    public function removeTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void
     {
-        $this->taskTimeEntries->removeElement($taskTimeEntry);
+        $this->timeEntries->removeElement($taskTimeEntry);
+    }
+
+    /**
+     * @return Collection<UserInterface>
+     */
+    public function getAssignedUsers(): Collection
+    {
+        return $this->assignedUsers;
+    }
+
+    public function addAssignedUser(UserInterface $user): void
+    {
+        $this->assignedUsers->add($user);
+    }
+
+    public function removeAssignedUser(UserInterface $user): void
+    {
+        $this->assignedUsers->removeElement($user);
     }
 }

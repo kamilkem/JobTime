@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Model\CreatedAtTrait;
 use App\Model\IdentifiableTrait;
 use App\Model\OrganizationInterface;
 use App\Model\OrganizationUserInterface;
@@ -26,6 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Organization implements OrganizationInterface
 {
     use IdentifiableTrait;
+    use CreatedAtTrait;
 
     /**
      * @var Collection<OrganizationUserInterface>

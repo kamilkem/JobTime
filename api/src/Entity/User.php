@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Model\CreatedAtTrait;
 use App\Model\IdentifiableTrait;
 use App\Model\OrganizationUserInterface;
 use App\Model\UserInterface;
@@ -31,8 +32,7 @@ use function in_array;
 class User implements UserInterface
 {
     use IdentifiableTrait;
-
-    public const ROLE_USER = 'ROLE_USER';
+    use CreatedAtTrait;
 
     /**
      * @var Collection<OrganizationUserInterface>

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Model\CreatedAtTrait;
 use App\Model\IdentifiableTrait;
 use App\Model\TaskInterface;
 use App\Model\TaskTimeEntryInterface;
@@ -27,6 +28,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 class TaskTimeEntry implements TaskTimeEntryInterface
 {
     use IdentifiableTrait;
+    use CreatedAtTrait;
 
     public function __construct(
         #[ManyToOne(targetEntity: Task::class, inversedBy: 'taskTimeEntries')]
@@ -46,7 +48,7 @@ class TaskTimeEntry implements TaskTimeEntryInterface
     public function setTask(TaskInterface $task): void
     {
         $this->task = $task;
-        $this->task->addTaskTimeEntry($this);
+        $this->task->addTimeEntry($this);
     }
 
     public function getStartDate(): CarbonInterface

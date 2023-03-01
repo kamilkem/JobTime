@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Model\CreatedAtTrait;
 use App\Model\IdentifiableTrait;
 use App\Model\ProjectGroupInterface;
 use App\Model\ProjectInterface;
@@ -26,6 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectGroup implements ProjectGroupInterface
 {
     use IdentifiableTrait;
+    use CreatedAtTrait;
 
     /**
      * @var Collection<ProjectInterface>

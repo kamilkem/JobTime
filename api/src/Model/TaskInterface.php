@@ -15,7 +15,7 @@ namespace App\Model;
 
 use Doctrine\Common\Collections\Collection;
 
-interface TaskInterface extends IdentifiableInterface
+interface TaskInterface extends IdentifiableInterface, CreatedAtInterface
 {
     public function getName(): string;
 
@@ -24,9 +24,18 @@ interface TaskInterface extends IdentifiableInterface
     /**
      * @return Collection<TaskTimeEntryInterface>
      */
-    public function getTaskTimeEntries(): Collection;
+    public function getTimeEntries(): Collection;
 
-    public function addTaskTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void;
+    public function addTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void;
 
-    public function removeTaskTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void;
+    public function removeTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void;
+
+    /**
+     * @return Collection<UserInterface>
+     */
+    public function getAssignedUsers(): Collection;
+
+    public function addAssignedUser(UserInterface $user): void;
+
+    public function removeAssignedUser(UserInterface $user): void;
 }

@@ -15,7 +15,7 @@ namespace App\Model;
 
 use Doctrine\Common\Collections\Collection;
 
-interface ProjectGroupInterface extends IdentifiableInterface
+interface ProjectGroupInterface extends IdentifiableInterface, CreatedAtInterface
 {
     public function getName(): string;
 

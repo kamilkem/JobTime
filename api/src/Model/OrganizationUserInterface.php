@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-interface OrganizationUserInterface
+interface OrganizationUserInterface extends CreatedAtInterface
 {
     public function getUser(): UserInterface;
 

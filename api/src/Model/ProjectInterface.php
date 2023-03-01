@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-interface ProjectInterface extends IdentifiableInterface
+interface ProjectInterface extends IdentifiableInterface, CreatedAtInterface
 {
     public function getName(): string;
 

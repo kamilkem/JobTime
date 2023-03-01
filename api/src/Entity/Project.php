@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Model\CreatedAtTrait;
+use App\Model\CreatedByUserTrait;
 use App\Model\IdentifiableTrait;
 use App\Model\ProjectGroupInterface;
 use App\Model\ProjectInterface;
@@ -24,6 +26,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Project implements ProjectInterface
 {
     use IdentifiableTrait;
+    use CreatedAtTrait;
+    use CreatedByUserTrait;
 
     public function __construct(
         #[ORM\Column]

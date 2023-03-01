@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Model\CreatedAtTrait;
 use App\Model\OrganizationInterface;
 use App\Model\OrganizationUserInterface;
 use App\Model\UserInterface;
@@ -21,6 +22,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class OrganizationUser implements OrganizationUserInterface
 {
+    use CreatedAtTrait;
+
     public function __construct(
         #[ORM\Id]
         #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'organizationUsers')]
