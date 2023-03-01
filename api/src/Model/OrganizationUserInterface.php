@@ -13,15 +13,15 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-interface OrganizationUserInterface extends CreatedAtInterface
+interface OrganizationUserInterface extends IdentifiableInterface, CreatedAtInterface
 {
     public function getUser(): UserInterface;
 
-    public function setUser(UserInterface $user): void;
+    public function setUser(UserInterface $user, bool $updateRelation = true): void;
 
     public function getOrganization(): OrganizationInterface;
 
-    public function setOrganization(OrganizationInterface $organization): void;
+    public function setOrganization(OrganizationInterface $organization, $updateRelation = true): void;
 
     public function isOwner(): bool;
 

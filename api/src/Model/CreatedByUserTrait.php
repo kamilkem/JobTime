@@ -23,4 +23,9 @@ trait CreatedByUserTrait
     {
         return $this->createdBy;
     }
+
+    public function setCreatedBy(UserInterface $createdBy): void
+    {
+        $this->createdBy = $createdBy;
+    }
 }

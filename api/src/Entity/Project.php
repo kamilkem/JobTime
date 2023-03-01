@@ -19,6 +19,10 @@ use App\Model\CreatedByUserTrait;
 use App\Model\IdentifiableTrait;
 use App\Model\ProjectGroupInterface;
 use App\Model\ProjectInterface;
+use App\Model\TaskInterface;
+use Carbon\CarbonImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
@@ -29,12 +33,28 @@ class Project implements ProjectInterface
     use CreatedAtTrait;
     use CreatedByUserTrait;
 
+    /**
+     * @var Collection<TaskInterface>
+     */
+    #[ORM\OneToMany(
+        mappedBy: 'project',
+        targetEntity: Task::class,
+        cascade: [
+            'persist',
+            'remove'
+        ],
+        orphanRemoval: true
+    )]
+    private Collection $tasks;
+
     public function __construct(
         #[ORM\Column]
         private string $name,
-        #[ORM\ManyToOne(targetEntity: ProjectGroup::class, inversedBy: 'projects')]
-        private ?ProjectGroupInterface $projectGroup = null
+        #[ORM\ManyToOne(targetEntity: ProjectGroup::class, cascade: ['persist'], inversedBy: 'projects')]
+        private ?ProjectGroupInterface $group = null
     ) {
+        $this->createdAt = CarbonImmutable::now();
+        $this->tasks = new ArrayCollection();
     }
 
     public function getName(): string
@@ -47,14 +67,42 @@ class Project implements ProjectInterface
         $this->name = $name;
     }
 
-    public function getProjectGroup(): ?ProjectGroupInterface
+    public function getGroup(): ?ProjectGroupInterface
     {
-        return $this->projectGroup;
+        return $this->group;
     }
 
-    public function setProjectGroup(?ProjectGroupInterface $projectGroup): void
+    public function setGroup(?ProjectGroupInterface $group, bool $updateRelation = true): void
     {
-        $this->projectGroup = $projectGroup;
-        $projectGroup->addProject($this);
+        $this->group = $group;
+
+        if ($updateRelation) {
+            $group->addProject($this, false);
+        }
+    }
+
+    /**
+     * @return Collection<TaskInterface>
+     */
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
+    }
+
+    public function addTask(TaskInterface $task, bool $updateRelation = true): void
+    {
+        if ($this->tasks->contains($task)) {
+            return;
+        }
+
+        $this->tasks->add($task);
+        if ($updateRelation) {
+            $task->setProject($this, false);
+        }
+    }
+
+    public function removeTask(TaskInterface $task): void
+    {
+        $this->tasks->removeElement($task);
     }
 }

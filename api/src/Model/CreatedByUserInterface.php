@@ -11,16 +11,9 @@
 
 namespace App\Model;
 
-use Carbon\CarbonInterface;
-use Doctrine\ORM\Mapping\Column;
-
-trait CreatedAtTrait
+interface CreatedByUserInterface
 {
-    #[Column(type: 'carbon_immutable')]
-    private CarbonInterface $createdAt;
+    public function getCreatedBy(): UserInterface;
 
-    public function getCreatedAt(): CarbonInterface
-    {
-        return $this->createdAt;
-    }
+    public function setCreatedBy(UserInterface $createdBy): void;
 }

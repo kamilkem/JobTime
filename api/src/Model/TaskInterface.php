@@ -15,8 +15,12 @@ namespace App\Model;
 
 use Doctrine\Common\Collections\Collection;
 
-interface TaskInterface extends IdentifiableInterface, CreatedAtInterface
+interface TaskInterface extends IdentifiableInterface, CreatedAtInterface, CreatedByUserInterface
 {
+    public function getProject(): ProjectInterface;
+
+    public function setProject(ProjectInterface $project, bool $updateRelation = true): void;
+
     public function getName(): string;
 
     public function setName(string $name): void;
@@ -26,9 +30,9 @@ interface TaskInterface extends IdentifiableInterface, CreatedAtInterface
      */
     public function getTimeEntries(): Collection;
 
-    public function addTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void;
+    public function addTimeEntry(TaskTimeEntryInterface $timeEntry, bool $updateRelation = true): void;
 
-    public function removeTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void;
+    public function removeTimeEntry(TaskTimeEntryInterface $timeEntry): void;
 
     /**
      * @return Collection<UserInterface>

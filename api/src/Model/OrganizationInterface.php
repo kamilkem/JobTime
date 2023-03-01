@@ -26,7 +26,7 @@ interface OrganizationInterface extends IdentifiableInterface, CreatedAtInterfac
      */
     public function getOrganizationUsers(): Collection;
 
-    public function addOrganizationUser(OrganizationUserInterface $organizationUser): void;
+    public function addOrganizationUser(OrganizationUserInterface $organizationUser, bool $updateRelation = true): void;
 
     public function removeOrganizationUser(OrganizationUserInterface $organizationUser): void;
 }

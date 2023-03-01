@@ -15,11 +15,11 @@ namespace App\Model;
 
 use Carbon\CarbonInterface;
 
-interface TaskTimeEntryInterface extends IdentifiableInterface, CreatedAtInterface
+interface TaskTimeEntryInterface extends IdentifiableInterface, CreatedAtInterface, CreatedByUserInterface
 {
     public function getTask(): TaskInterface;
 
-    public function setTask(TaskInterface $task): void;
+    public function setTask(TaskInterface $task, bool $updateRelation = true): void;
 
     public function getStartDate(): CarbonInterface;
 

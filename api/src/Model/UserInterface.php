@@ -19,7 +19,8 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface as BaseUserInterface;
 
-interface UserInterface extends IdentifiableInterface, CreatedAtInterface, BaseUserInterface, PasswordAuthenticatedUserInterface
+interface UserInterface extends IdentifiableInterface, CreatedAtInterface, BaseUserInterface,
+                                PasswordAuthenticatedUserInterface
 {
     public const ROLE_USER = 'ROLE_USER';
 
@@ -58,7 +59,7 @@ interface UserInterface extends IdentifiableInterface, CreatedAtInterface, BaseU
      */
     public function getOrganizationUsers(): Collection;
 
-    public function addOrganizationUser(OrganizationUser $organizationUser): void;
+    public function addOrganizationUser(OrganizationUser $organizationUser, bool $updateRelation = true): void;
 
     public function removeOrganizationUser(OrganizationUser $organizationUser): void;
 }
