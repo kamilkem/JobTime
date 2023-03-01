@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the jobtime-backend package.
+ * This file is part of the JobTime package.
  *
  * (c) Kamil Kozaczyński <kozaczynski.kamil@gmail.com>
  *
@@ -19,8 +19,11 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface as BaseUserInterface;
 
-interface UserInterface extends IdentifiableInterface, BaseUserInterface, PasswordAuthenticatedUserInterface
+interface UserInterface extends IdentifiableInterface, CreatedAtInterface, BaseUserInterface,
+                                PasswordAuthenticatedUserInterface
 {
+    public const ROLE_USER = 'ROLE_USER';
+
     public function getEmail(): string;
 
     public function setEmail(string $email): void;
@@ -56,7 +59,7 @@ interface UserInterface extends IdentifiableInterface, BaseUserInterface, Passwo
      */
     public function getOrganizationUsers(): Collection;
 
-    public function addOrganizationUser(OrganizationUser $organizationUser): void;
+    public function addOrganizationUser(OrganizationUser $organizationUser, bool $updateRelation = true): void;
 
     public function removeOrganizationUser(OrganizationUser $organizationUser): void;
 }

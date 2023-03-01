@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the jobtime-backend package.
+ * This file is part of the JobTime package.
  *
  * (c) Kamil Kozaczyński <kozaczynski.kamil@gmail.com>
  *
@@ -15,8 +15,12 @@ namespace App\Model;
 
 use Doctrine\Common\Collections\Collection;
 
-interface TaskInterface extends IdentifiableInterface
+interface TaskInterface extends IdentifiableInterface, CreatedAtInterface, CreatedByUserInterface
 {
+    public function getProject(): ProjectInterface;
+
+    public function setProject(ProjectInterface $project, bool $updateRelation = true): void;
+
     public function getName(): string;
 
     public function setName(string $name): void;
@@ -24,9 +28,18 @@ interface TaskInterface extends IdentifiableInterface
     /**
      * @return Collection<TaskTimeEntryInterface>
      */
-    public function getTaskTimeEntries(): Collection;
+    public function getTimeEntries(): Collection;
 
-    public function addTaskTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void;
+    public function addTimeEntry(TaskTimeEntryInterface $timeEntry, bool $updateRelation = true): void;
 
-    public function removeTaskTimeEntry(TaskTimeEntryInterface $taskTimeEntry): void;
+    public function removeTimeEntry(TaskTimeEntryInterface $timeEntry): void;
+
+    /**
+     * @return Collection<UserInterface>
+     */
+    public function getAssignedUsers(): Collection;
+
+    public function addAssignedUser(UserInterface $user): void;
+
+    public function removeAssignedUser(UserInterface $user): void;
 }

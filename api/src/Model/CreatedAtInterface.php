@@ -9,13 +9,11 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types=1);
-
 namespace App\Model;
 
-use Ramsey\Uuid\UuidInterface;
+use Carbon\CarbonInterface;
 
-interface IdentifiableInterface
+interface CreatedAtInterface
 {
-    public function getId(): ?UuidInterface;
+    public function getCreatedAt(): CarbonInterface;
 }

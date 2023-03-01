@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the jobtime-backend package.
+ * This file is part of the JobTime package.
  *
  * (c) Kamil Kozaczyński <kozaczynski.kamil@gmail.com>
  *

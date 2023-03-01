@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the jobtime-backend package.
+ * This file is part of the JobTime package.
  *
  * (c) Kamil Kozaczyński <kozaczynski.kamil@gmail.com>
  *
@@ -14,9 +14,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Model\CreatedAtTrait;
+use App\Model\CreatedByUserTrait;
 use App\Model\IdentifiableTrait;
 use App\Model\TaskInterface;
 use App\Model\TaskTimeEntryInterface;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -27,15 +30,18 @@ use Doctrine\ORM\Mapping\ManyToOne;
 class TaskTimeEntry implements TaskTimeEntryInterface
 {
     use IdentifiableTrait;
+    use CreatedAtTrait;
+    use CreatedByUserTrait;
 
     public function __construct(
-        #[ManyToOne(targetEntity: Task::class, inversedBy: 'taskTimeEntries')]
+        #[ManyToOne(targetEntity: Task::class, cascade: ['persist'], inversedBy: 'timeEntries')]
         private TaskInterface $task,
         #[Column(type: 'carbon_immutable')]
         private CarbonInterface $startDate,
         #[Column(type: 'carbon_immutable', nullable: true)]
         private ?CarbonInterface $endDate
     ) {
+        $this->createdAt = CarbonImmutable::now();
     }
 
     public function getTask(): TaskInterface
@@ -43,10 +49,13 @@ class TaskTimeEntry implements TaskTimeEntryInterface
         return $this->task;
     }
 
-    public function setTask(TaskInterface $task): void
+    public function setTask(TaskInterface $task, bool $updateRelation = true): void
     {
         $this->task = $task;
-        $this->task->addTaskTimeEntry($this);
+
+        if ($updateRelation) {
+            $task->addTimeEntry($this, false);
+        }
     }
 
     public function getStartDate(): CarbonInterface

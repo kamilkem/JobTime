@@ -9,13 +9,11 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types=1);
-
 namespace App\Model;
 
-use Ramsey\Uuid\UuidInterface;
-
-interface IdentifiableInterface
+interface CreatedByUserInterface
 {
-    public function getId(): ?UuidInterface;
+    public function getCreatedBy(): UserInterface;
+
+    public function setCreatedBy(UserInterface $createdBy): void;
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the jobtime-backend package.
+ * This file is part of the JobTime package.
  *
  * (c) Kamil Kozaczyński <kozaczynski.kamil@gmail.com>
  *
@@ -15,11 +15,11 @@ namespace App\Model;
 
 use Carbon\CarbonInterface;
 
-interface TaskTimeEntryInterface extends IdentifiableInterface
+interface TaskTimeEntryInterface extends IdentifiableInterface, CreatedAtInterface, CreatedByUserInterface
 {
     public function getTask(): TaskInterface;
 
-    public function setTask(TaskInterface $task): void;
+    public function setTask(TaskInterface $task, bool $updateRelation = true): void;
 
     public function getStartDate(): CarbonInterface;
 

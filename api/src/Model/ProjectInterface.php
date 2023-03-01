@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the jobtime-backend package.
+ * This file is part of the JobTime package.
  *
  * (c) Kamil Kozaczyński <kozaczynski.kamil@gmail.com>
  *
@@ -13,13 +13,24 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-interface ProjectInterface extends IdentifiableInterface
+use Doctrine\Common\Collections\Collection;
+
+interface ProjectInterface extends IdentifiableInterface, CreatedAtInterface, CreatedByUserInterface
 {
     public function getName(): string;
 
     public function setName(string $name): void;
 
-    public function getProjectGroup(): ?ProjectGroupInterface;
+    public function getGroup(): ?ProjectGroupInterface;
 
-    public function setProjectGroup(?ProjectGroupInterface $projectGroup): void;
+    public function setGroup(?ProjectGroupInterface $group, bool $updateRelation = true): void;
+
+    /**
+     * @return Collection<TaskInterface>
+     */
+    public function getTasks(): Collection;
+
+    public function addTask(TaskInterface $task, bool $updateRelation = true): void;
+
+    public function removeTask(TaskInterface $task): void;
 }

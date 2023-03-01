@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the jobtime-backend package.
+ * This file is part of the JobTime package.
  *
  * (c) Kamil Kozaczyński <kozaczynski.kamil@gmail.com>
  *
@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Model\CreatedAtTrait;
 use App\Model\IdentifiableTrait;
 use App\Model\OrganizationInterface;
 use App\Model\OrganizationUserInterface;
+use Carbon\CarbonImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,17 +28,27 @@ use Doctrine\ORM\Mapping as ORM;
 class Organization implements OrganizationInterface
 {
     use IdentifiableTrait;
+    use CreatedAtTrait;
 
     /**
      * @var Collection<OrganizationUserInterface>
      */
-    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: OrganizationUser::class)]
+    #[ORM\OneToMany(
+        mappedBy: 'organization',
+        targetEntity: OrganizationUser::class,
+        cascade: [
+            'persist',
+            'remove'
+        ],
+        orphanRemoval: true
+    )]
     private Collection $organizationUsers;
 
     public function __construct(
         #[ORM\Column]
         private string $name,
     ) {
+        $this->createdAt = CarbonImmutable::now();
         $this->organizationUsers = new ArrayCollection();
     }
 
@@ -58,9 +70,16 @@ class Organization implements OrganizationInterface
         return $this->organizationUsers;
     }
 
-    public function addOrganizationUser(OrganizationUserInterface $organizationUser): void
+    public function addOrganizationUser(OrganizationUserInterface $organizationUser, bool $updateRelation = true): void
     {
+        if ($this->organizationUsers->contains($organizationUser)) {
+            return;
+        }
+
         $this->organizationUsers->add($organizationUser);
+        if ($updateRelation) {
+            $organizationUser->setOrganization($this, false);
+        }
     }
 
     public function removeOrganizationUser(OrganizationUserInterface $organizationUser): void

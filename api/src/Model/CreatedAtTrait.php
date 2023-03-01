@@ -9,13 +9,18 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types=1);
-
 namespace App\Model;
 
-use Ramsey\Uuid\UuidInterface;
+use Carbon\CarbonInterface;
+use Doctrine\ORM\Mapping\Column;
 
-interface IdentifiableInterface
+trait CreatedAtTrait
 {
-    public function getId(): ?UuidInterface;
+    #[Column(type: 'carbon_immutable')]
+    private CarbonInterface $createdAt;
+
+    public function getCreatedAt(): CarbonInterface
+    {
+        return $this->createdAt;
+    }
 }

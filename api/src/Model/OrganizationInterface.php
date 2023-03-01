@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the jobtime-backend package.
+ * This file is part of the JobTime package.
  *
  * (c) Kamil Kozaczyński <kozaczynski.kamil@gmail.com>
  *
@@ -15,7 +15,7 @@ namespace App\Model;
 
 use Doctrine\Common\Collections\Collection;
 
-interface OrganizationInterface extends IdentifiableInterface
+interface OrganizationInterface extends IdentifiableInterface, CreatedAtInterface
 {
     public function getName(): string;
 
@@ -26,7 +26,7 @@ interface OrganizationInterface extends IdentifiableInterface
      */
     public function getOrganizationUsers(): Collection;
 
-    public function addOrganizationUser(OrganizationUserInterface $organizationUser): void;
+    public function addOrganizationUser(OrganizationUserInterface $organizationUser, bool $updateRelation = true): void;
 
     public function removeOrganizationUser(OrganizationUserInterface $organizationUser): void;
 }

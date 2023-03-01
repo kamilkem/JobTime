@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the jobtime-backend package.
+ * This file is part of the JobTime package.
  *
  * (c) Kamil Kozaczyński <kozaczynski.kamil@gmail.com>
  *
@@ -13,24 +13,31 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use App\Model\CreatedAtTrait;
+use App\Model\IdentifiableTrait;
 use App\Model\OrganizationInterface;
 use App\Model\OrganizationUserInterface;
 use App\Model\UserInterface;
+use Carbon\CarbonImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource]
 #[ORM\Entity]
 class OrganizationUser implements OrganizationUserInterface
 {
+    use IdentifiableTrait;
+    use CreatedAtTrait;
+
     public function __construct(
-        #[ORM\Id]
-        #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'organizationUsers')]
+        #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'organizationUsers')]
         private UserInterface $user,
-        #[ORM\Id]
-        #[ORM\ManyToOne(targetEntity: Organization::class, inversedBy: 'organizationUsers')]
+        #[ORM\ManyToOne(targetEntity: Organization::class, cascade: ['persist'], inversedBy: 'organizationUsers')]
         private Organization $organization,
         #[ORM\Column(type: 'boolean')]
         private bool $owner
     ) {
+        $this->createdAt = CarbonImmutable::now();
     }
 
     public function getUser(): UserInterface
@@ -38,10 +45,13 @@ class OrganizationUser implements OrganizationUserInterface
         return $this->user;
     }
 
-    public function setUser(UserInterface $user): void
+    public function setUser(UserInterface $user, bool $updateRelation = true): void
     {
         $this->user = $user;
-        $user->addOrganizationUser($this);
+
+        if ($updateRelation) {
+            $user->addOrganizationUser($this, false);
+        }
     }
 
     public function getOrganization(): OrganizationInterface
@@ -49,10 +59,13 @@ class OrganizationUser implements OrganizationUserInterface
         return $this->organization;
     }
 
-    public function setOrganization(OrganizationInterface $organization): void
+    public function setOrganization(OrganizationInterface $organization, $updateRelation = true): void
     {
         $this->organization = $organization;
-        $organization->addOrganizationUser($this);
+
+        if ($updateRelation) {
+            $organization->addOrganizationUser($this, false);
+        }
     }
 
     public function isOwner(): bool

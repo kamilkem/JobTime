@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the jobtime-backend package.
+ * This file is part of the JobTime package.
  *
  * (c) Kamil Kozaczyński <kozaczynski.kamil@gmail.com>
  *
@@ -14,9 +14,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Model\CreatedAtTrait;
+use App\Model\CreatedByUserTrait;
 use App\Model\IdentifiableTrait;
 use App\Model\ProjectGroupInterface;
 use App\Model\ProjectInterface;
+use Carbon\CarbonImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,17 +29,20 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectGroup implements ProjectGroupInterface
 {
     use IdentifiableTrait;
+    use CreatedAtTrait;
+    use CreatedByUserTrait;
 
     /**
      * @var Collection<ProjectInterface>
      */
-    #[ORM\OneToMany(mappedBy: 'projectGroups', targetEntity: Project::class)]
+    #[ORM\OneToMany(mappedBy: 'group', targetEntity: Project::class, cascade: ['persist'])]
     private Collection $projects;
 
     public function __construct(
         #[ORM\Column]
         private string $name
     ) {
+        $this->createdAt = CarbonImmutable::now();
         $this->projects = new ArrayCollection();
     }
 
@@ -58,13 +64,23 @@ class ProjectGroup implements ProjectGroupInterface
         return $this->projects;
     }
 
-    public function addProject(ProjectInterface $project): void
+    public function addProject(ProjectInterface $project, bool $updateRelation = true): void
     {
+        if ($this->projects->contains($project)) {
+            return;
+        }
+
         $this->projects->add($project);
+        if ($updateRelation) {
+            $project->setGroup($this, false);
+        }
     }
 
-    public function removeProject(ProjectInterface $project): void
+    public function removeProject(ProjectInterface $project, bool $updateRelation = true): void
     {
         $this->projects->removeElement($project);
+        if ($updateRelation) {
+            $project->setGroup(null, false);
+        }
     }
 }
