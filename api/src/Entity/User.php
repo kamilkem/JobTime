@@ -49,15 +49,14 @@ class User implements UserInterface
     )]
     private Collection $organizationUsers;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $password = null;
+
     private ?string $plainPassword = null;
 
     public function __construct(
         #[ORM\Column]
         private string $email,
-        #[ORM\Column(nullable: true)]
-        private ?string $password = null,
-        #[ORM\Column(type: 'simple_array')]
-        private array $roles = [],
         #[ORM\Column(nullable: true)]
         private ?string $firstName = null,
         #[ORM\Column(nullable: true)]
@@ -66,6 +65,8 @@ class User implements UserInterface
         private ?CarbonInterface $birthDate = null,
         #[ORM\Column(type: 'boolean')]
         private bool $confirmed = false,
+        #[ORM\Column(type: 'simple_array')]
+        private array $roles = [],
     ) {
         if (!in_array(self::ROLE_USER, $this->roles)) {
             $this->roles[] = self::ROLE_USER;
