@@ -33,7 +33,7 @@ class OrganizationUser implements OrganizationUserInterface
         #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'organizationUsers')]
         private UserInterface $user,
         #[ORM\ManyToOne(targetEntity: Organization::class, cascade: ['persist'], inversedBy: 'organizationUsers')]
-        private Organization $organization,
+        private OrganizationInterface $organization,
         #[ORM\Column(type: 'boolean')]
         private bool $owner
     ) {
@@ -59,7 +59,7 @@ class OrganizationUser implements OrganizationUserInterface
         return $this->organization;
     }
 
-    public function setOrganization(OrganizationInterface $organization, $updateRelation = true): void
+    public function setOrganization(OrganizationInterface $organization, bool $updateRelation = true): void
     {
         $this->organization = $organization;
 

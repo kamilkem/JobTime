@@ -38,6 +38,10 @@ jobs:
         run: curl -vk -o /dev/null https://localhost
       - name: Check PWA reachability
         run: "curl -vk -o /dev/null -H 'Accept: text/html' https://localhost"
+      - name: Run phpcs
+        run: docker compose exec -T php php vendor/bin/phpcs
+      - name: Run phpstan
+        run: docker compose exec -T php php -d memory_limit=4G vendor/bin/phpstan
       - name: Create test database
         run: |
           docker compose exec -T php bin/console -e test doctrine:database:create
