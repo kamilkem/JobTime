@@ -76,7 +76,7 @@ class Project implements ProjectInterface
     {
         $this->group = $group;
 
-        if ($updateRelation) {
+        if ($group && $updateRelation) {
             $group->addProject($this, false);
         }
     }

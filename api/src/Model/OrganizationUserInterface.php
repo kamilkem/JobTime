@@ -21,7 +21,7 @@ interface OrganizationUserInterface extends IdentifiableInterface, CreatedAtInte
 
     public function getOrganization(): OrganizationInterface;
 
-    public function setOrganization(OrganizationInterface $organization, $updateRelation = true): void;
+    public function setOrganization(OrganizationInterface $organization, bool $updateRelation = true): void;
 
     public function isOwner(): bool;
 

@@ -35,6 +35,9 @@
         "api-platform/schema-generator": "^5.0",
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "fakerphp/faker": "^1.21",
+        "malukenho/docheader": "^1.0",
+        "phpstan/phpstan": "^1.10",
+        "squizlabs/php_codesniffer": "^4.0.x-dev",
         "symfony/browser-kit": "6.2.*",
         "symfony/css-selector": "6.2.*",
         "symfony/debug-bundle": "6.2.*",
@@ -88,6 +91,17 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "linter:check": "@php vendor/bin/phpcs",
+        "linter:fix": "@php vendor/bin/phpcbf",
+        "stan:check": "@php vendor/bin/phpstan",
+        "dochead:check": "@php vendor/bin/docheader check src/",
+        "db:validate": "@php bin/console doctrine:schema:validate --skip-sync",
+        "ci:check": [
+            "@linter:check",
+            "@stan:check",
+            "@dochead:check",
+            "@db:validate"
         ]
     },
     "conflict": {
