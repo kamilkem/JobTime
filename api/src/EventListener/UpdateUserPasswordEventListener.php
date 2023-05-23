@@ -14,9 +14,13 @@ declare(strict_types=1);
 namespace App\EventListener;
 
 use App\Model\UserInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+#[AsDoctrineListener(Events::prePersist)]
+#[AsDoctrineListener(Events::preUpdate)]
 final readonly class UpdateUserPasswordEventListener
 {
     public function __construct(private UserPasswordHasherInterface $passwordHasher)
