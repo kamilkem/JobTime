@@ -25,9 +25,8 @@ class OrganizationFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $organization = new Organization(
-            self::ORGANIZATION_NAME,
-        );
+        $organization = new Organization();
+        $organization->setName(self::ORGANIZATION_NAME);
 
         $manager->persist($organization);
         $this->addReference(self::ORGANIZATION_REFERENCE_NAME, $organization);

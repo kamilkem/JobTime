@@ -13,16 +13,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Carbon\CarbonInterface;
-use Doctrine\ORM\Mapping\Column;
-
-trait CreatedAtTrait
+enum IntegrationServiceEnum: string
 {
-    #[Column(type: 'carbon_immutable')]
-    protected CarbonInterface $createdAt;
-
-    public function getCreatedAt(): CarbonInterface
-    {
-        return $this->createdAt;
-    }
+    case GITHUB = 'github';
 }

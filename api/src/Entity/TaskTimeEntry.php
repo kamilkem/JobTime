@@ -13,25 +13,23 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Model\CreatedAtTrait;
-use App\Model\CreatedByUserTrait;
-use App\Model\IdentifiableTrait;
+use ApiPlatform\Metadata as API;
 use App\Model\TaskInterface;
 use App\Model\TaskTimeEntryInterface;
+use App\Model\UserResourceTrait;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\ManyToOne;
 
-#[ApiResource]
+#[API\ApiResource(
+    operations: []
+)]
 #[Entity]
 class TaskTimeEntry implements TaskTimeEntryInterface
 {
-    use IdentifiableTrait;
-    use CreatedAtTrait;
-    use CreatedByUserTrait;
+    use UserResourceTrait;
 
     public function __construct(
         #[ManyToOne(targetEntity: Task::class, cascade: ['persist'], inversedBy: 'timeEntries')]

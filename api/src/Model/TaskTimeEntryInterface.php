@@ -15,7 +15,7 @@ namespace App\Model;
 
 use Carbon\CarbonInterface;
 
-interface TaskTimeEntryInterface extends IdentifiableInterface, CreatedAtInterface, CreatedByUserInterface
+interface TaskTimeEntryInterface extends UserResourceInterface
 {
     public function getTask(): TaskInterface;
 

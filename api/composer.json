@@ -9,9 +9,11 @@
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.12",
+        "knplabs/github-api": "^3.11",
         "lexik/jwt-authentication-bundle": "^2.19",
         "nelmio/cors-bundle": "^2.2",
         "nesbot/carbon": "^2.66",
+        "nyholm/psr7": "^1.8",
         "phpdocumentor/reflection-docblock": "^5.3",
         "ramsey/uuid": "^4.7",
         "ramsey/uuid-doctrine": "^2.0",
@@ -57,7 +59,8 @@
         "allow-plugins": {
             "composer/package-versions-deprecated": true,
             "symfony/flex": true,
-            "symfony/runtime": true
+            "symfony/runtime": true,
+            "php-http/discovery": true
         }
     },
     "autoload": {

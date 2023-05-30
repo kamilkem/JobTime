@@ -15,15 +15,15 @@ namespace App\Model;
 
 use Doctrine\Common\Collections\Collection;
 
-interface ProjectInterface extends IdentifiableInterface, CreatedAtInterface, CreatedByUserInterface
+interface ProjectInterface extends UserResourceInterface
 {
-    public function getName(): string;
+    public function getOrganization(): ?OrganizationInterface;
+
+    public function setOrganization(OrganizationInterface $organization, bool $updateRelation = true): void;
+
+    public function getName(): ?string;
 
     public function setName(string $name): void;
-
-    public function getGroup(): ?ProjectGroupInterface;
-
-    public function setGroup(?ProjectGroupInterface $group, bool $updateRelation = true): void;
 
     /**
      * @return Collection<TaskInterface>
@@ -33,4 +33,13 @@ interface ProjectInterface extends IdentifiableInterface, CreatedAtInterface, Cr
     public function addTask(TaskInterface $task, bool $updateRelation = true): void;
 
     public function removeTask(TaskInterface $task): void;
+
+    /**
+     * @return Collection<ProjectIntegrationInterface>
+     */
+    public function getIntegrations(): Collection;
+
+    public function addIntegration(ProjectIntegrationInterface $integration, bool $updateRelation = true): void;
+
+    public function removeIntegration(ProjectIntegrationInterface $integration): void;
 }

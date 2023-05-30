@@ -13,26 +13,25 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Model\CreatedAtTrait;
-use App\Model\CreatedByUserTrait;
-use App\Model\IdentifiableTrait;
+use ApiPlatform\Metadata as API;
+use App\Model\ProjectIntegrationInterface;
 use App\Model\ProjectInterface;
 use App\Model\TaskInterface;
 use App\Model\TaskTimeEntryInterface;
 use App\Model\UserInterface;
+use App\Model\UserResourceTrait;
 use Carbon\CarbonImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource]
+#[API\ApiResource(
+    operations: []
+)]
 #[ORM\Entity]
 class Task implements TaskInterface
 {
-    use IdentifiableTrait;
-    use CreatedAtTrait;
-    use CreatedByUserTrait;
+    use UserResourceTrait;
 
     /**
      * @var Collection<TaskTimeEntryInterface>
@@ -59,6 +58,8 @@ class Task implements TaskInterface
         private ProjectInterface $project,
         #[ORM\Column]
         private string $name,
+        #[ORM\ManyToOne(targetEntity: ProjectIntegration::class, cascade: ['persist'], inversedBy: 'tasks')]
+        private ?ProjectIntegrationInterface $projectIntegration = null,
     ) {
         $this->createdAt = CarbonImmutable::now();
         $this->timeEntries = new ArrayCollection();
@@ -87,6 +88,22 @@ class Task implements TaskInterface
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getProjectIntegration(): ?ProjectIntegrationInterface
+    {
+        return $this->projectIntegration;
+    }
+
+    public function setProjectIntegration(
+        ?ProjectIntegrationInterface $projectIntegration,
+        bool $updateRelation = true
+    ): void {
+        $this->projectIntegration = $projectIntegration;
+
+        if ($projectIntegration && $updateRelation) {
+            $projectIntegration->addTask($this, false);
+        }
     }
 
     /**

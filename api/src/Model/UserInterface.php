@@ -20,8 +20,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface as BaseUserInterface;
 
 interface UserInterface extends
-    IdentifiableInterface,
-    CreatedAtInterface,
+    ResourceInterface,
     BaseUserInterface,
     PasswordAuthenticatedUserInterface
 {
@@ -65,4 +64,13 @@ interface UserInterface extends
     public function addOrganizationUser(OrganizationUser $organizationUser, bool $updateRelation = true): void;
 
     public function removeOrganizationUser(OrganizationUser $organizationUser): void;
+
+    /**
+     * @return Collection<UserIntegrationInterface>
+     */
+    public function getIntegrations(): Collection;
+
+    public function addIntegration(UserIntegrationInterface $integration, bool $updateRelation = true): void;
+
+    public function removeIntegration(UserIntegrationInterface $integration): void;
 }
