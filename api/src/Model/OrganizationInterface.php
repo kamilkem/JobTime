@@ -15,9 +15,9 @@ namespace App\Model;
 
 use Doctrine\Common\Collections\Collection;
 
-interface OrganizationInterface extends IdentifiableInterface, CreatedAtInterface
+interface OrganizationInterface extends ResourceInterface, OwnableInterface
 {
-    public function getName(): string;
+    public function getName(): ?string;
 
     public function setName(string $name): void;
 
@@ -29,4 +29,15 @@ interface OrganizationInterface extends IdentifiableInterface, CreatedAtInterfac
     public function addOrganizationUser(OrganizationUserInterface $organizationUser, bool $updateRelation = true): void;
 
     public function removeOrganizationUser(OrganizationUserInterface $organizationUser): void;
+
+    /**
+     * @return Collection<OrganizationUserInterface>
+     */
+    public function getProjects(): Collection;
+
+    public function addProject(ProjectInterface $project, bool $updateRelation = true): void;
+
+    public function removeProject(ProjectInterface $project): void;
+
+    public function isUserMember(UserInterface $user): bool;
 }

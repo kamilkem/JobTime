@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 trait CreatedByUserTrait
 {
     #[ManyToOne(targetEntity: User::class)]
-    private UserInterface $createdBy;
+    protected UserInterface $createdBy;
 
     public function getCreatedBy(): UserInterface
     {

@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Model\CreatedAtTrait;
-use App\Model\IdentifiableTrait;
+use ApiPlatform\Metadata as API;
 use App\Model\OrganizationUserInterface;
+use App\Model\ResourceTrait;
+use App\Model\UserIntegrationInterface;
 use App\Model\UserInterface;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
@@ -27,13 +27,14 @@ use Doctrine\ORM\Mapping as ORM;
 use function array_unique;
 use function in_array;
 
-#[ApiResource]
+#[API\ApiResource(
+    operations: []
+)]
 #[ORM\Entity]
 #[ORM\Table(name: '`user`')]
 class User implements UserInterface
 {
-    use IdentifiableTrait;
-    use CreatedAtTrait;
+    use ResourceTrait;
 
     /**
      * @var Collection<OrganizationUserInterface>
@@ -48,6 +49,20 @@ class User implements UserInterface
         orphanRemoval: true
     )]
     private Collection $organizationUsers;
+
+    /**
+     * @var Collection<UserIntegrationInterface>
+     */
+    #[ORM\OneToMany(
+        mappedBy: 'user',
+        targetEntity: UserIntegration::class,
+        cascade: [
+            'persist',
+            'remove'
+        ],
+        orphanRemoval: true
+    )]
+    private Collection $integrations;
 
     #[ORM\Column(nullable: true)]
     private ?string $password = null;
@@ -74,6 +89,7 @@ class User implements UserInterface
 
         $this->createdAt = CarbonImmutable::now();
         $this->organizationUsers = new ArrayCollection();
+        $this->integrations = new ArrayCollection();
     }
 
     public function getEmail(): string
@@ -174,6 +190,31 @@ class User implements UserInterface
     public function removeOrganizationUser(OrganizationUserInterface $organizationUser): void
     {
         $this->organizationUsers->removeElement($organizationUser);
+    }
+
+    /**
+     * @return Collection<UserIntegrationInterface>
+     */
+    public function getIntegrations(): Collection
+    {
+        return $this->integrations;
+    }
+
+    public function addIntegration(UserIntegrationInterface $integration, bool $updateRelation = true): void
+    {
+        if ($this->integrations->contains($integration)) {
+            return;
+        }
+
+        $this->integrations->add($integration);
+        if ($updateRelation) {
+            $integration->setUser($this, false);
+        }
+    }
+
+    public function removeIntegration(UserIntegrationInterface $integration): void
+    {
+        $this->integrations->removeElement($integration);
     }
 
     public function getUserIdentifier(): string

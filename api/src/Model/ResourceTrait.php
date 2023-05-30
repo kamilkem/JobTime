@@ -13,16 +13,8 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Carbon\CarbonInterface;
-use Doctrine\ORM\Mapping\Column;
-
-trait CreatedAtTrait
+trait ResourceTrait
 {
-    #[Column(type: 'carbon_immutable')]
-    protected CarbonInterface $createdAt;
-
-    public function getCreatedAt(): CarbonInterface
-    {
-        return $this->createdAt;
-    }
+    use IdentifiableTrait;
+    use CreatedAtTrait;
 }

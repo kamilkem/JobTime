@@ -13,16 +13,6 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Carbon\CarbonInterface;
-use Doctrine\ORM\Mapping\Column;
-
-trait CreatedAtTrait
+interface ResourceInterface extends IdentifiableInterface, CreatedAtInterface
 {
-    #[Column(type: 'carbon_immutable')]
-    protected CarbonInterface $createdAt;
-
-    public function getCreatedAt(): CarbonInterface
-    {
-        return $this->createdAt;
-    }
 }

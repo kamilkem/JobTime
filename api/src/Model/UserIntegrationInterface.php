@@ -13,16 +13,13 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Carbon\CarbonInterface;
-use Doctrine\ORM\Mapping\Column;
-
-trait CreatedAtTrait
+interface UserIntegrationInterface extends IntegrationInterface
 {
-    #[Column(type: 'carbon_immutable')]
-    protected CarbonInterface $createdAt;
+    public function getUser(): UserInterface;
 
-    public function getCreatedAt(): CarbonInterface
-    {
-        return $this->createdAt;
-    }
+    public function setUser(UserInterface $user, bool $updateRelation = true): void;
+
+    public function getSecret(): string;
+
+    public function setSecret(string $secret): void;
 }

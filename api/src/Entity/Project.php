@@ -13,25 +13,79 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Model\CreatedAtTrait;
-use App\Model\CreatedByUserTrait;
-use App\Model\IdentifiableTrait;
-use App\Model\ProjectGroupInterface;
+use ApiPlatform\Metadata as API;
+use App\Model\OrganizationInterface;
+use App\Model\ProjectIntegrationInterface;
 use App\Model\ProjectInterface;
 use App\Model\TaskInterface;
+use App\Model\UserResourceTrait;
+use App\Security\OrganizationVoter;
+use App\State\CreateProjectProcessor;
 use Carbon\CarbonImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource]
+#[API\ApiResource(
+    uriTemplate: '/organizations/{organizationId}/projects/{id}.{_format}',
+    operations: [
+        new API\Get(),
+        new API\Patch(
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_OWNER . '\', object.getOrganization())',
+        ),
+        new API\Delete(
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_OWNER . '\', object.getOrganization())',
+        )
+    ],
+    uriVariables: [
+        'organizationId' => new API\Link(toProperty: 'organization', fromClass: Organization::class),
+        'id' => new API\Link(fromClass: Project::class),
+    ],
+    normalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+    ],
+    denormalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+    ],
+)]
+#[API\ApiResource(
+    uriTemplate: '/organizations/{organizationId}/projects.{_format}',
+    operations: [
+        new API\GetCollection(),
+        new API\Post(
+            read: false,
+            processor: CreateProjectProcessor::class,
+        ),
+    ],
+    uriVariables: [
+        'organizationId' => new API\Link(toProperty: 'organization', fromClass: Organization::class)
+    ],
+    normalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+    ],
+    denormalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+    ],
+)]
 #[ORM\Entity]
 class Project implements ProjectInterface
 {
-    use IdentifiableTrait;
-    use CreatedAtTrait;
-    use CreatedByUserTrait;
+    use UserResourceTrait;
+
+    public const GROUP_READ = 'project:read';
+    public const GROUP_WRITE = 'project:write';
+
+    #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Groups(groups: [self::GROUP_READ, self::GROUP_WRITE])]
+    private ?string $name = null;
+
+    #[ORM\ManyToOne(targetEntity: Organization::class, cascade: ['persist'], inversedBy: 'projects')]
+    #[Groups(groups: [self::GROUP_READ])]
+    private ?OrganizationInterface $organization = null;
 
     /**
      * @var Collection<TaskInterface>
@@ -45,19 +99,46 @@ class Project implements ProjectInterface
         ],
         orphanRemoval: true
     )]
+    #[Groups(groups: [self::GROUP_READ])]
     private Collection $tasks;
 
-    public function __construct(
-        #[ORM\Column]
-        private string $name,
-        #[ORM\ManyToOne(targetEntity: ProjectGroup::class, cascade: ['persist'], inversedBy: 'projects')]
-        private ?ProjectGroupInterface $group = null
-    ) {
+    /**
+     * @var Collection<ProjectIntegrationInterface>
+     */
+    #[ORM\OneToMany(
+        mappedBy: 'project',
+        targetEntity: ProjectIntegration::class,
+        cascade: [
+            'persist',
+            'remove'
+        ],
+        orphanRemoval: true
+    )]
+    #[Groups(groups: [self::GROUP_READ])]
+    private Collection $integrations;
+
+    public function __construct()
+    {
         $this->createdAt = CarbonImmutable::now();
         $this->tasks = new ArrayCollection();
+        $this->integrations = new ArrayCollection();
     }
 
-    public function getName(): string
+    public function getOrganization(): ?OrganizationInterface
+    {
+        return $this->organization;
+    }
+
+    public function setOrganization(OrganizationInterface $organization, bool $updateRelation = true): void
+    {
+        $this->organization = $organization;
+
+        if ($updateRelation) {
+            $organization->addProject($this, false);
+        }
+    }
+
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -65,20 +146,6 @@ class Project implements ProjectInterface
     public function setName(string $name): void
     {
         $this->name = $name;
-    }
-
-    public function getGroup(): ?ProjectGroupInterface
-    {
-        return $this->group;
-    }
-
-    public function setGroup(?ProjectGroupInterface $group, bool $updateRelation = true): void
-    {
-        $this->group = $group;
-
-        if ($group && $updateRelation) {
-            $group->addProject($this, false);
-        }
     }
 
     /**
@@ -104,5 +171,30 @@ class Project implements ProjectInterface
     public function removeTask(TaskInterface $task): void
     {
         $this->tasks->removeElement($task);
+    }
+
+    /**
+     * @return Collection<ProjectIntegrationInterface>
+     */
+    public function getIntegrations(): Collection
+    {
+        return $this->integrations;
+    }
+
+    public function addIntegration(ProjectIntegrationInterface $integration, bool $updateRelation = true): void
+    {
+        if ($this->integrations->contains($integration)) {
+            return;
+        }
+
+        $this->integrations->add($integration);
+        if ($updateRelation) {
+            $integration->setProject($this, false);
+        }
+    }
+
+    public function removeIntegration(ProjectIntegrationInterface $integration): void
+    {
+        $this->integrations->removeElement($integration);
     }
 }
