@@ -1,7 +1,3 @@
-api_doc:
-    path: /docs
-    controller: api_platform.swagger_ui.action
-
 authentication_token:
     path: '%app.security.api_route%/auth/token'
     methods: ['POST']
