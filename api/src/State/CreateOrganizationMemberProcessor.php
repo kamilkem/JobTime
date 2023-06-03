@@ -15,9 +15,9 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use App\Dto\CreateOrganizationUserInput;
-use App\Entity\OrganizationUser;
-use App\Model\OrganizationUserInterface;
+use App\Dto\CreateOrganizationMemberInput;
+use App\Entity\OrganizationMember;
+use App\Model\OrganizationMemberInterface;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\Security\OrganizationVoter;
@@ -27,7 +27,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-readonly class CreateOrganizationUserProcessor implements ProcessorInterface
+readonly class CreateOrganizationMemberProcessor implements ProcessorInterface
 {
     public function __construct(
         #[Autowire(service: 'ApiPlatform\Doctrine\Common\State\PersistProcessor')]
@@ -43,12 +43,12 @@ readonly class CreateOrganizationUserProcessor implements ProcessorInterface
         Operation $operation,
         array $uriVariables = [],
         array $context = []
-    ): OrganizationUserInterface {
-        if (!$data instanceof CreateOrganizationUserInput || !isset($uriVariables['organizationId'])) {
+    ): OrganizationMemberInterface {
+        if (!$data instanceof CreateOrganizationMemberInput || !isset($uriVariables['organization'])) {
             throw new \RuntimeException();
         }
 
-        $organization = $this->organizationRepository->find($uriVariables['organizationId']);
+        $organization = $this->organizationRepository->find($uriVariables['organization']);
 
         if (!$organization) {
             throw new NotFoundHttpException();
@@ -64,7 +64,7 @@ readonly class CreateOrganizationUserProcessor implements ProcessorInterface
             throw new BadRequestHttpException();
         }
 
-        $newData = new OrganizationUser();
+        $newData = new OrganizationMember();
         $newData->setUser($user);
         $newData->setOrganization($organization);
         $newData->setOwner($data->owner);

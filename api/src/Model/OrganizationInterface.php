@@ -22,16 +22,16 @@ interface OrganizationInterface extends ResourceInterface, OwnableInterface
     public function setName(string $name): void;
 
     /**
-     * @return Collection<OrganizationUserInterface>
+     * @return Collection<OrganizationMemberInterface>
      */
-    public function getOrganizationUsers(): Collection;
+    public function getMembers(): Collection;
 
-    public function addOrganizationUser(OrganizationUserInterface $organizationUser, bool $updateRelation = true): void;
+    public function addMember(OrganizationMemberInterface $organizationMember, bool $updateRelation = true): void;
 
-    public function removeOrganizationUser(OrganizationUserInterface $organizationUser): void;
+    public function removeMember(OrganizationMemberInterface $organizationMember): void;
 
     /**
-     * @return Collection<OrganizationUserInterface>
+     * @return Collection<OrganizationMemberInterface>
      */
     public function getProjects(): Collection;
 

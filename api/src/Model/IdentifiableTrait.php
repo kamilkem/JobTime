@@ -16,6 +16,7 @@ namespace App\Model;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait IdentifiableTrait
 {
@@ -23,6 +24,7 @@ trait IdentifiableTrait
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[Groups(groups: [ResourceInterface::GROUP_READ])]
     protected ?UuidInterface $id = null;
 
     public function getId(): ?UuidInterface

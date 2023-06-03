@@ -13,20 +13,20 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\OrganizationUser;
+use App\Entity\OrganizationMember;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method OrganizationUser|null find($id, $lockMode = null, $lockVersion = null)
- * @method OrganizationUser|null findOneBy(array $criteria, array $orderBy = null)
- * @method OrganizationUser[]    findAll()
- * @method OrganizationUser[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method OrganizationMember|null find($id, $lockMode = null, $lockVersion = null)
+ * @method OrganizationMember|null findOneBy(array $criteria, array $orderBy = null)
+ * @method OrganizationMember[]    findAll()
+ * @method OrganizationMember[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class OrganizationUserRepository extends ServiceEntityRepository
+class OrganizationMemberRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, OrganizationUser::class);
+        parent::__construct($registry, OrganizationMember::class);
     }
 }

@@ -14,14 +14,14 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
-use App\Dto\CreateOrganizationUserInput;
+use App\Dto\CreateOrganizationMemberInput;
 use App\Model\OrganizationInterface;
-use App\Model\OrganizationUserInterface;
+use App\Model\OrganizationMemberInterface;
 use App\Model\ResourceTrait;
 use App\Model\UserInterface;
 use App\Security\OrganizationVoter;
-use App\State\CreateOrganizationUserProcessor;
-use App\State\OrganizationUserCollectionProvider;
+use App\State\CreateOrganizationMemberProcessor;
+use App\State\OrganizationSubresourceCollectionProvider;
 use Carbon\CarbonImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[API\ApiResource(
-    uriTemplate: '/organizations/{organizationId}/organization_users/{id}.{_format}',
+    uriTemplate: '/members/{organization}/{member}.{_format}',
     operations: [
         new API\Get(
             security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object.getOrganization())'
@@ -42,8 +42,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         )
     ],
     uriVariables: [
-        'organizationId' => new API\Link(toProperty: 'organization', fromClass: Organization::class),
-        'id' => new API\Link(fromClass: OrganizationUser::class),
+        'organization' => new API\Link(toProperty: 'organization', fromClass: Organization::class),
+        'member' => new API\Link(fromClass: self::class),
     ],
     normalizationContext: [
         AbstractNormalizer::GROUPS => [self::GROUP_READ]
@@ -53,19 +53,19 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[API\ApiResource(
-    uriTemplate: '/organizations/{organizationId}/organization_users.{_format}',
+    uriTemplate: '/orgs/{organization}/members.{_format}',
     operations: [
         new API\GetCollection(
-            provider: OrganizationUserCollectionProvider::class,
+            provider: OrganizationSubresourceCollectionProvider::class,
         ),
         new API\Post(
-            input: CreateOrganizationUserInput::class,
+            input: CreateOrganizationMemberInput::class,
             read: false,
-            processor: CreateOrganizationUserProcessor::class,
+            processor: CreateOrganizationMemberProcessor::class,
         )
     ],
     uriVariables: [
-        'organizationId' => new API\Link(toProperty: 'organization', fromClass: Organization::class)
+        'organization' => new API\Link(toProperty: 'organization', fromClass: Organization::class)
     ],
     normalizationContext: [
         AbstractNormalizer::GROUPS => [self::GROUP_READ]
@@ -75,7 +75,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[ORM\Entity]
-class OrganizationUser implements OrganizationUserInterface
+class OrganizationMember implements OrganizationMemberInterface
 {
     use ResourceTrait;
 
@@ -83,11 +83,11 @@ class OrganizationUser implements OrganizationUserInterface
     public const GROUP_WRITE = 'organization_user:write';
 
     public function __construct(
-        #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'organizationUsers')]
+        #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'organizationMembers')]
         #[Assert\NotNull]
         #[Groups(groups: [self::GROUP_READ, self::GROUP_WRITE])]
         private ?UserInterface $user = null,
-        #[ORM\ManyToOne(targetEntity: Organization::class, cascade: ['persist'], inversedBy: 'organizationUsers')]
+        #[ORM\ManyToOne(targetEntity: Organization::class, cascade: ['persist'], inversedBy: 'members')]
         #[Groups(groups: [self::GROUP_READ])]
         private ?OrganizationInterface $organization = null,
         #[ORM\Column(type: 'boolean')]
@@ -107,7 +107,7 @@ class OrganizationUser implements OrganizationUserInterface
         $this->user = $user;
 
         if ($updateRelation) {
-            $user->addOrganizationUser($this, false);
+            $user->addOrganizationMember($this, false);
         }
     }
 
@@ -121,7 +121,7 @@ class OrganizationUser implements OrganizationUserInterface
         $this->organization = $organization;
 
         if ($updateRelation) {
-            $organization->addOrganizationUser($this, false);
+            $organization->addMember($this, false);
         }
     }
 

@@ -47,6 +47,7 @@ class OrganizationVoter extends Voter
             throw new \RuntimeException();
         }
 
+
         return match ($attribute) {
             self::IS_USER_OWNER => $subject->isUserOwner($user),
             self::IS_USER_MEMBER => $subject->isUserMember($user),
