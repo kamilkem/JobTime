@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
-use App\Entity\OrganizationUser;
+use App\Entity\OrganizationMember;
 use App\Model\OrganizationInterface;
 use App\Model\UserInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class OrganizationUserFixtures extends Fixture implements DependentFixtureInterface
+class OrganizationMemberFixtures extends Fixture implements DependentFixtureInterface
 {
     use FixtureTrait;
 
@@ -41,13 +41,13 @@ class OrganizationUserFixtures extends Fixture implements DependentFixtureInterf
             /** @var UserInterface $user */
             $user = $this->getReference($this->createReferenceName(UserFixtures::USER_REFERENCE_NAME, $i));
 
-            $organizationUser = new OrganizationUser(
+            $organizationMember = new OrganizationMember(
                 $user,
                 $organization,
                 0 === $i
             );
 
-            $manager->persist($organizationUser);
+            $manager->persist($organizationMember);
             $manager->flush();
         }
     }

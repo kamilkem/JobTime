@@ -17,6 +17,8 @@ use Doctrine\Common\Collections\Collection;
 
 interface TaskInterface extends UserResourceInterface
 {
+    public function getOrganization(): ?OrganizationInterface;
+
     public function getProject(): ProjectInterface;
 
     public function setProject(ProjectInterface $project, bool $updateRelation = true): void;

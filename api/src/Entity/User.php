@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
-use App\Model\OrganizationUserInterface;
+use App\Model\OrganizationMemberInterface;
 use App\Model\ResourceTrait;
 use App\Model\UserIntegrationInterface;
 use App\Model\UserInterface;
@@ -37,18 +37,18 @@ class User implements UserInterface
     use ResourceTrait;
 
     /**
-     * @var Collection<OrganizationUserInterface>
+     * @var Collection<OrganizationMemberInterface>
      */
     #[ORM\OneToMany(
         mappedBy: 'user',
-        targetEntity: OrganizationUser::class,
+        targetEntity: OrganizationMember::class,
         cascade: [
             'persist',
             'remove'
         ],
         orphanRemoval: true
     )]
-    private Collection $organizationUsers;
+    private Collection $organizationMembers;
 
     /**
      * @var Collection<UserIntegrationInterface>
@@ -88,7 +88,7 @@ class User implements UserInterface
         }
 
         $this->createdAt = CarbonImmutable::now();
-        $this->organizationUsers = new ArrayCollection();
+        $this->organizationMembers = new ArrayCollection();
         $this->integrations = new ArrayCollection();
     }
 
@@ -168,28 +168,28 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection<OrganizationUserInterface>
+     * @return Collection<OrganizationMemberInterface>
      */
-    public function getOrganizationUsers(): Collection
+    public function getOrganizationMembers(): Collection
     {
-        return $this->organizationUsers;
+        return $this->organizationMembers;
     }
 
-    public function addOrganizationUser(OrganizationUserInterface $organizationUser, bool $updateRelation = true): void
+    public function addOrganizationMember(OrganizationMemberInterface $organizationMember, bool $updateRelation = true): void
     {
-        if ($this->organizationUsers->contains($organizationUser)) {
+        if ($this->organizationMembers->contains($organizationMember)) {
             return;
         }
 
-        $this->organizationUsers->add($organizationUser);
+        $this->organizationMembers->add($organizationMember);
         if ($updateRelation) {
-            $organizationUser->setUser($this, false);
+            $organizationMember->setUser($this, false);
         }
     }
 
-    public function removeOrganizationUser(OrganizationUserInterface $organizationUser): void
+    public function removeOrganizationMember(OrganizationMemberInterface $organizationMember): void
     {
-        $this->organizationUsers->removeElement($organizationUser);
+        $this->organizationMembers->removeElement($organizationMember);
     }
 
     /**

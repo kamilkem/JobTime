@@ -15,4 +15,6 @@ namespace App\Model;
 
 interface ResourceInterface extends IdentifiableInterface, CreatedAtInterface
 {
+    public const GROUP_READ = 'read';
+    public const GROUP_WRITE = 'write';
 }

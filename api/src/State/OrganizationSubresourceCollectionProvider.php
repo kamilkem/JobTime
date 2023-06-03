@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-readonly class OrganizationUserCollectionProvider implements ProviderInterface
+readonly class OrganizationSubresourceCollectionProvider implements ProviderInterface
 {
     public function __construct(
         #[Autowire(service: 'ApiPlatform\Doctrine\Orm\State\CollectionProvider')]
@@ -34,11 +34,11 @@ readonly class OrganizationUserCollectionProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-        if (!isset($uriVariables['organizationId'])) {
+        if (!isset($uriVariables['organization'])) {
             throw new \RuntimeException();
         }
 
-        $organization = $this->organizationRepository->find($uriVariables['organizationId']);
+        $organization = $this->organizationRepository->find($uriVariables['organization']);
 
         if (!$organization) {
             throw new NotFoundHttpException();

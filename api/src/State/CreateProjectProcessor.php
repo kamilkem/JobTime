@@ -39,11 +39,11 @@ readonly class CreateProjectProcessor implements ProcessorInterface
         array $uriVariables = [],
         array $context = []
     ): ProjectInterface {
-        if (!$data instanceof ProjectInterface || !isset($uriVariables['organizationId'])) {
+        if (!$data instanceof ProjectInterface || !isset($uriVariables['organization'])) {
             throw new \RuntimeException();
         }
 
-        $organization = $this->organizationRepository->find($uriVariables['organizationId']);
+        $organization = $this->organizationRepository->find($uriVariables['organization']);
 
         if (!$organization) {
             throw new NotFoundHttpException();

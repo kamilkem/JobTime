@@ -14,24 +14,76 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
+use App\Model\OrganizationInterface;
 use App\Model\ProjectIntegrationInterface;
 use App\Model\ProjectInterface;
 use App\Model\TaskInterface;
 use App\Model\TaskTimeEntryInterface;
 use App\Model\UserInterface;
 use App\Model\UserResourceTrait;
+use App\Security\OrganizationVoter;
+use App\State\OrganizationSubresourceCollectionProvider;
 use Carbon\CarbonImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[API\ApiResource(
-    operations: []
+    uriTemplate: '/projects/{organization}/{project}/tasks/{task}.{_format}',
+    operations: [
+        new API\Get(
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object)',
+        ),
+        new API\Patch(
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object)',
+        ),
+        new API\Delete(
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object)',
+        ),
+    ],
+    uriVariables: [
+        'organization' => new API\Link(toProperty: 'organization', fromClass: Organization::class),
+        'project' => new API\Link(toProperty: 'project', fromClass: Project::class),
+        'task' => new API\Link(fromClass: self::class),
+    ],
+    normalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+    ],
+    denormalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+    ],
+)]
+#[API\ApiResource(
+    uriTemplate: '/projects/{organization}/{project}/tasks.{_format}',
+    operations: [
+        new API\GetCollection(
+            provider: OrganizationSubresourceCollectionProvider::class,
+        ),
+        new API\Post(
+            read: false,
+        ),
+    ],
+    uriVariables: [
+        'organization' => new API\Link(toProperty: 'organization', fromClass: Organization::class),
+        'project' => new API\Link(toProperty: 'project', fromClass: Project::class),
+    ],
+    normalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+    ],
+    denormalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+    ],
 )]
 #[ORM\Entity]
 class Task implements TaskInterface
 {
     use UserResourceTrait;
+
+    public const GROUP_READ = 'task:read';
+    public const GROUP_WRITE = 'task:write';
 
     /**
      * @var Collection<TaskTimeEntryInterface>
@@ -57,6 +109,8 @@ class Task implements TaskInterface
         #[ORM\ManyToOne(targetEntity: Project::class, cascade: ['persist'], inversedBy: 'tasks')]
         private ProjectInterface $project,
         #[ORM\Column]
+        #[Assert\NotBlank]
+        #[Groups(groups: [self::GROUP_READ, self::GROUP_WRITE])]
         private string $name,
         #[ORM\ManyToOne(targetEntity: ProjectIntegration::class, cascade: ['persist'], inversedBy: 'tasks')]
         private ?ProjectIntegrationInterface $projectIntegration = null,
@@ -64,6 +118,11 @@ class Task implements TaskInterface
         $this->createdAt = CarbonImmutable::now();
         $this->timeEntries = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();
+    }
+
+    public function getOrganization(): ?OrganizationInterface
+    {
+        return $this->project->getOrganization();
     }
 
     public function getProject(): ProjectInterface

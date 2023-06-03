@@ -15,7 +15,7 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use App\Entity\OrganizationUser;
+use App\Entity\OrganizationMember;
 use App\Model\OrganizationInterface;
 use App\Model\UserInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -43,10 +43,10 @@ readonly class CreateOrganizationProcessor implements ProcessorInterface
             throw new \RuntimeException();
         }
 
-        $organizationUser = new OrganizationUser();
-        $organizationUser->setUser($user);
-        $organizationUser->setOrganization($data);
-        $organizationUser->setOwner(true);
+        $organizationMember = new OrganizationMember();
+        $organizationMember->setUser($user);
+        $organizationMember->setOrganization($data);
+        $organizationMember->setOwner(true);
 
         return $this->processor->process($data, $operation, $uriVariables, $context);
     }

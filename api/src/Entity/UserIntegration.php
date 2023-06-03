@@ -43,7 +43,6 @@ class UserIntegration extends AbstractIntegration implements UserIntegrationInte
         #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'integrations')]
         private UserInterface $user,
         #[ORM\Column(type: 'string')]
-        #[Groups(['write'])]
         private string $secret,
         IntegrationServiceEnum $serviceName,
         IntegrationStatusEnum $status,

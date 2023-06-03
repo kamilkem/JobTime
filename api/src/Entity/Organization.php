@@ -15,7 +15,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
 use App\Model\OrganizationInterface;
-use App\Model\OrganizationUserInterface;
+use App\Model\OrganizationMemberInterface;
 use App\Model\ProjectInterface;
 use App\Model\ResourceTrait;
 use App\Model\UserInterface;
@@ -30,11 +30,23 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[API\ApiResource(
+    uriTemplate: '/orgs.{_format}',
     operations: [
         new API\GetCollection(),
         new API\Post(
             processor: CreateOrganizationProcessor::class,
         ),
+    ],
+    normalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+    ],
+    denormalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+    ],
+)]
+#[API\ApiResource(
+    uriTemplate: '/orgs/{organization}.{_format}',
+    operations: [
         new API\Get(
             security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object)'
         ),
@@ -45,12 +57,15 @@ use Symfony\Component\Validator\Constraints as Assert;
             security: 'is_granted(\'' . OrganizationVoter::IS_USER_OWNER . '\', object)'
         ),
     ],
+    uriVariables: [
+        'organization' => new API\Link(fromClass: self::class)
+    ],
     normalizationContext: [
         AbstractNormalizer::GROUPS => [self::GROUP_READ]
     ],
     denormalizationContext: [
         AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
-    ]
+    ],
 )]
 #[ORM\Entity]
 class Organization implements OrganizationInterface
@@ -61,11 +76,11 @@ class Organization implements OrganizationInterface
     public const GROUP_WRITE = 'organization:write';
 
     /**
-     * @var Collection<OrganizationUserInterface>
+     * @var Collection<OrganizationMemberInterface>
      */
     #[ORM\OneToMany(
         mappedBy: 'organization',
-        targetEntity: OrganizationUser::class,
+        targetEntity: OrganizationMember::class,
         cascade: [
             'persist',
             'remove'
@@ -73,7 +88,7 @@ class Organization implements OrganizationInterface
         orphanRemoval: true
     )]
     #[Groups(groups: [self::GROUP_READ])]
-    private Collection $organizationUsers;
+    private Collection $members;
 
     /**
      * @var Collection<ProjectInterface>
@@ -97,7 +112,7 @@ class Organization implements OrganizationInterface
         private ?string $name = null,
     ) {
         $this->createdAt = CarbonImmutable::now();
-        $this->organizationUsers = new ArrayCollection();
+        $this->members = new ArrayCollection();
         $this->projects = new ArrayCollection();
     }
 
@@ -112,28 +127,28 @@ class Organization implements OrganizationInterface
     }
 
     /**
-     * @return Collection<OrganizationUserInterface>
+     * @return Collection<OrganizationMemberInterface>
      */
-    public function getOrganizationUsers(): Collection
+    public function getMembers(): Collection
     {
-        return $this->organizationUsers;
+        return $this->members;
     }
 
-    public function addOrganizationUser(OrganizationUserInterface $organizationUser, bool $updateRelation = true): void
+    public function addMember(OrganizationMemberInterface $organizationMember, bool $updateRelation = true): void
     {
-        if ($this->organizationUsers->contains($organizationUser)) {
+        if ($this->members->contains($organizationMember)) {
             return;
         }
 
-        $this->organizationUsers->add($organizationUser);
+        $this->members->add($organizationMember);
         if ($updateRelation) {
-            $organizationUser->setOrganization($this, false);
+            $organizationMember->setOrganization($this, false);
         }
     }
 
-    public function removeOrganizationUser(OrganizationUserInterface $organizationUser): void
+    public function removeMember(OrganizationMemberInterface $organizationMember): void
     {
-        $this->organizationUsers->removeElement($organizationUser);
+        $this->members->removeElement($organizationMember);
     }
 
     /**
@@ -163,15 +178,20 @@ class Organization implements OrganizationInterface
 
     public function isUserMember(UserInterface $user): bool
     {
-        return $this->organizationUsers->contains($user);
+        return $this->members->exists(
+            static function (int|string $key, mixed $organizationMember) use ($user) {
+                /** @var OrganizationMemberInterface $organizationMember */
+                return $organizationMember->getUser() === $user;
+            }
+        );
     }
 
     public function isUserOwner(UserInterface $user): bool
     {
-        return $this->organizationUsers->exists(
-            static function (int|string $key, mixed $organizationUser) use ($user) {
-                /** @var OrganizationUserInterface $organizationUser */
-                return $organizationUser->getUser() === $user && $organizationUser->isOwner();
+        return $this->members->exists(
+            static function (int|string $key, mixed $organizationMember) use ($user) {
+                /** @var OrganizationMemberInterface $organizationMember */
+                return $organizationMember->getUser() === $user && $organizationMember->isOwner();
             }
         );
     }

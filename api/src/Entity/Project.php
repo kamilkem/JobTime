@@ -21,6 +21,7 @@ use App\Model\TaskInterface;
 use App\Model\UserResourceTrait;
 use App\Security\OrganizationVoter;
 use App\State\CreateProjectProcessor;
+use App\State\OrganizationSubresourceCollectionProvider;
 use Carbon\CarbonImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -30,9 +31,11 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[API\ApiResource(
-    uriTemplate: '/organizations/{organizationId}/projects/{id}.{_format}',
+    uriTemplate: '/projects/{organization}/{project}.{_format}',
     operations: [
-        new API\Get(),
+        new API\Get(
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object.getOrganization())',
+        ),
         new API\Patch(
             security: 'is_granted(\'' . OrganizationVoter::IS_USER_OWNER . '\', object.getOrganization())',
         ),
@@ -41,8 +44,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         )
     ],
     uriVariables: [
-        'organizationId' => new API\Link(toProperty: 'organization', fromClass: Organization::class),
-        'id' => new API\Link(fromClass: Project::class),
+        'organization' => new API\Link(toProperty: 'organization', fromClass: Organization::class),
+        'project' => new API\Link(fromClass: self::class),
     ],
     normalizationContext: [
         AbstractNormalizer::GROUPS => [self::GROUP_READ]
@@ -52,16 +55,18 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[API\ApiResource(
-    uriTemplate: '/organizations/{organizationId}/projects.{_format}',
+    uriTemplate: '/orgs/{organization}/projects.{_format}',
     operations: [
-        new API\GetCollection(),
+        new API\GetCollection(
+            provider: OrganizationSubresourceCollectionProvider::class,
+        ),
         new API\Post(
             read: false,
             processor: CreateProjectProcessor::class,
         ),
     ],
     uriVariables: [
-        'organizationId' => new API\Link(toProperty: 'organization', fromClass: Organization::class)
+        'organization' => new API\Link(toProperty: 'organization', fromClass: Organization::class)
     ],
     normalizationContext: [
         AbstractNormalizer::GROUPS => [self::GROUP_READ]
@@ -77,15 +82,6 @@ class Project implements ProjectInterface
 
     public const GROUP_READ = 'project:read';
     public const GROUP_WRITE = 'project:write';
-
-    #[ORM\Column]
-    #[Assert\NotBlank]
-    #[Groups(groups: [self::GROUP_READ, self::GROUP_WRITE])]
-    private ?string $name = null;
-
-    #[ORM\ManyToOne(targetEntity: Organization::class, cascade: ['persist'], inversedBy: 'projects')]
-    #[Groups(groups: [self::GROUP_READ])]
-    private ?OrganizationInterface $organization = null;
 
     /**
      * @var Collection<TaskInterface>
@@ -117,8 +113,15 @@ class Project implements ProjectInterface
     #[Groups(groups: [self::GROUP_READ])]
     private Collection $integrations;
 
-    public function __construct()
-    {
+    public function __construct(
+        #[ORM\Column]
+        #[Assert\NotBlank]
+        #[Groups(groups: [self::GROUP_READ, self::GROUP_WRITE])]
+        private ?string $name = null,
+        #[ORM\ManyToOne(targetEntity: Organization::class, cascade: ['persist'], inversedBy: 'projects')]
+        #[Groups(groups: [self::GROUP_READ])]
+        private ?OrganizationInterface $organization = null,
+    ) {
         $this->createdAt = CarbonImmutable::now();
         $this->tasks = new ArrayCollection();
         $this->integrations = new ArrayCollection();

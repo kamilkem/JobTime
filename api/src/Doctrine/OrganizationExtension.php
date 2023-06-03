@@ -51,7 +51,7 @@ readonly class OrganizationExtension implements QueryCollectionExtensionInterfac
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-            ->join(sprintf('%s.organizationUsers', $rootAlias), 'ou')
+            ->join(sprintf('%s.members', $rootAlias), 'ou')
             ->andWhere($queryBuilder->expr()->eq('ou.user', ':user'))
             ->setParameter('user', $user);
     }

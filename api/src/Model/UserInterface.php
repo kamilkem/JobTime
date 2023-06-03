@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use App\Entity\OrganizationUser;
+use App\Entity\OrganizationMember;
 use Carbon\CarbonInterface;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -57,13 +57,13 @@ interface UserInterface extends
     public function setPlainPassword(?string $plainPassword): void;
 
     /**
-     * @return Collection<OrganizationUserInterface>
+     * @return Collection<OrganizationMemberInterface>
      */
-    public function getOrganizationUsers(): Collection;
+    public function getOrganizationMembers(): Collection;
 
-    public function addOrganizationUser(OrganizationUser $organizationUser, bool $updateRelation = true): void;
+    public function addOrganizationMember(OrganizationMember $organizationMember, bool $updateRelation = true): void;
 
-    public function removeOrganizationUser(OrganizationUser $organizationUser): void;
+    public function removeOrganizationMember(OrganizationMember $organizationMember): void;
 
     /**
      * @return Collection<UserIntegrationInterface>

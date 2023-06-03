@@ -30,7 +30,6 @@ abstract class AbstractIntegration implements IntegrationInterface
     private IntegrationServiceEnum $serviceName;
 
     #[ORM\Column(type: 'string', enumType: IntegrationStatusEnum::class)]
-    #[Groups(['write'])]
     private IntegrationStatusEnum $status;
 
     public function __construct(
