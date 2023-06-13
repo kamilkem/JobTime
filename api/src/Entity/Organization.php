@@ -32,7 +32,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[API\ApiResource(
     uriTemplate: '/orgs.{_format}',
     operations: [
-        new API\GetCollection(),
         new API\Post(
             processor: CreateOrganizationProcessor::class,
         ),
@@ -59,6 +58,18 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     uriVariables: [
         'organization' => new API\Link(fromClass: self::class)
+    ],
+    normalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+    ],
+    denormalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+    ],
+)]
+#[API\ApiResource(
+    uriTemplate: '/user/orgs.{_format}',
+    operations: [
+        new API\GetCollection(),
     ],
     normalizationContext: [
         AbstractNormalizer::GROUPS => [self::GROUP_READ]

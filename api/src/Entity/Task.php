@@ -77,6 +77,18 @@ use Symfony\Component\Validator\Constraints as Assert;
         AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
     ],
 )]
+#[API\ApiResource(
+    uriTemplate: '/user/tasks.{_format}',
+    operations: [
+        new API\GetCollection()
+    ],
+    normalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+    ],
+    denormalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+    ],
+)]
 #[ORM\Entity]
 class Task implements TaskInterface
 {
