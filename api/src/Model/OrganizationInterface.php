@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use App\Entity\OrganizationInvitation;
 use Doctrine\Common\Collections\Collection;
 
 interface OrganizationInterface extends ResourceInterface, OwnableInterface
@@ -29,6 +30,18 @@ interface OrganizationInterface extends ResourceInterface, OwnableInterface
     public function addMember(OrganizationMemberInterface $organizationMember, bool $updateRelation = true): void;
 
     public function removeMember(OrganizationMemberInterface $organizationMember): void;
+
+    /**
+     * @return Collection<OrganizationInvitationInterface>
+     */
+    public function getInvitations(): Collection;
+
+    public function removeInvitation(OrganizationInvitation $organizationInvitation): void;
+
+    public function addInvitation(
+        OrganizationInvitationInterface $organizationInvitation,
+        bool $updateRelation = true
+    ): void;
 
     /**
      * @return Collection<OrganizationMemberInterface>

@@ -35,13 +35,13 @@ use Symfony\Component\Validator\Constraints as Assert;
     uriTemplate: '/projects/{organization}/{project}/tasks/{task}.{_format}',
     operations: [
         new API\Get(
-            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object)',
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object.getOrganization())',
         ),
         new API\Patch(
-            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object)',
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object.getOrganization())',
         ),
         new API\Delete(
-            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object)',
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object.getOrganization())',
         ),
     ],
     uriVariables: [
@@ -69,6 +69,18 @@ use Symfony\Component\Validator\Constraints as Assert;
     uriVariables: [
         'organization' => new API\Link(toProperty: 'organization', fromClass: Organization::class),
         'project' => new API\Link(toProperty: 'project', fromClass: Project::class),
+    ],
+    normalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+    ],
+    denormalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+    ],
+)]
+#[API\ApiResource(
+    uriTemplate: '/user/tasks.{_format}',
+    operations: [
+        new API\GetCollection()
     ],
     normalizationContext: [
         AbstractNormalizer::GROUPS => [self::GROUP_READ]

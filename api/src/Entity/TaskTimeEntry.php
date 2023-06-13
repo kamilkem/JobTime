@@ -17,7 +17,6 @@ use ApiPlatform\Metadata as API;
 use App\Model\TaskInterface;
 use App\Model\TaskTimeEntryInterface;
 use App\Model\UserResourceTrait;
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -39,7 +38,6 @@ class TaskTimeEntry implements TaskTimeEntryInterface
         #[Column(type: 'carbon_immutable', nullable: true)]
         private ?CarbonInterface $endDate
     ) {
-        $this->createdAt = CarbonImmutable::now();
     }
 
     public function getTask(): TaskInterface

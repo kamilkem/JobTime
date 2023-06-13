@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
+use App\Model\OrganizationInvitationInterface;
 use App\Model\OrganizationMemberInterface;
 use App\Model\ResourceTrait;
 use App\Model\UserIntegrationInterface;
 use App\Model\UserInterface;
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -49,6 +49,17 @@ class User implements UserInterface
         orphanRemoval: true
     )]
     private Collection $organizationMembers;
+
+    #[ORM\OneToMany(
+        mappedBy: 'user',
+        targetEntity: OrganizationInvitation::class,
+        cascade: [
+            'persist',
+            'remove'
+        ],
+        orphanRemoval: true
+    )]
+    private Collection $organizationInvitations;
 
     /**
      * @var Collection<UserIntegrationInterface>
@@ -87,8 +98,8 @@ class User implements UserInterface
             $this->roles[] = self::ROLE_USER;
         }
 
-        $this->createdAt = CarbonImmutable::now();
         $this->organizationMembers = new ArrayCollection();
+        $this->organizationInvitations = new ArrayCollection();
         $this->integrations = new ArrayCollection();
     }
 
@@ -190,6 +201,33 @@ class User implements UserInterface
     public function removeOrganizationMember(OrganizationMemberInterface $organizationMember): void
     {
         $this->organizationMembers->removeElement($organizationMember);
+    }
+
+    /**
+     * @return Collection<OrganizationInvitationInterface>
+     */
+    public function getOrganizationInvitations(): Collection
+    {
+        return $this->organizationInvitations;
+    }
+
+    public function addOrganizationInvitation(
+        OrganizationInvitationInterface $organizationInvitation,
+        bool $updateRelation = true
+    ): void {
+        if ($this->organizationInvitations->contains($organizationInvitation)) {
+            return;
+        }
+
+        $this->organizationInvitations->add($organizationInvitation);
+        if ($updateRelation) {
+            $organizationInvitation->setUser($this, false);
+        }
+    }
+
+    public function removeOrganizationInvitation(OrganizationInvitation $organizationInvitation): void
+    {
+        $this->organizationInvitations->removeElement($organizationInvitation);
     }
 
     /**

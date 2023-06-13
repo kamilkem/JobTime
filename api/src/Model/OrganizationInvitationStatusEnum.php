@@ -13,11 +13,9 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Carbon\CarbonInterface;
-
-interface CreatedAtInterface
+enum OrganizationInvitationStatusEnum: string
 {
-    public function getCreatedAt(): ?CarbonInterface;
-
-    public function setCreatedAt(CarbonInterface $createdAt): void;
+    case PENDING = 'pending';
+    case ACCEPTED = 'accepted';
+    case CANCELLED = 'cancelled';
 }

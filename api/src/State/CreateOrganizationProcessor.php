@@ -43,10 +43,8 @@ readonly class CreateOrganizationProcessor implements ProcessorInterface
             throw new \RuntimeException();
         }
 
-        $organizationMember = new OrganizationMember();
-        $organizationMember->setUser($user);
-        $organizationMember->setOrganization($data);
-        $organizationMember->setOwner(true);
+        $organizationMember = new OrganizationMember($user, $data, true);
+        $data->addMember($organizationMember, false);
 
         return $this->processor->process($data, $operation, $uriVariables, $context);
     }

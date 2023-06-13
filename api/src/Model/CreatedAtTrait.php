@@ -21,10 +21,19 @@ trait CreatedAtTrait
 {
     #[Column(type: 'carbon_immutable')]
     #[Groups(groups: [ResourceInterface::GROUP_READ])]
-    protected CarbonInterface $createdAt;
+    protected ?CarbonInterface $createdAt = null;
 
-    public function getCreatedAt(): CarbonInterface
+    public function getCreatedAt(): ?CarbonInterface
     {
         return $this->createdAt;
+    }
+
+    public function setCreatedAt(CarbonInterface $createdAt): void
+    {
+        if ($this->createdAt) {
+            throw new \LogicException();
+        }
+
+        $this->createdAt = $createdAt;
     }
 }

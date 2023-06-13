@@ -13,17 +13,14 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Entity\OrganizationMember;
+use App\Entity\OrganizationInvitation;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateOrganizationMemberInput
+class CreateOrganizationInvitationInput
 {
     #[Assert\NotBlank]
     #[Assert\Email]
-    #[Groups(groups: [OrganizationMember::GROUP_WRITE])]
-    public ?string $email = null;
-
-    #[Groups(groups: [OrganizationMember::GROUP_WRITE])]
-    public bool $owner = false;
+    #[Groups(groups: [OrganizationInvitation::GROUP_WRITE])]
+    public string $email;
 }

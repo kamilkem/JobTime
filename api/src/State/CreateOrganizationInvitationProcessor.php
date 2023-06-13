@@ -15,19 +15,18 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use App\Dto\CreateOrganizationMemberInput;
-use App\Entity\OrganizationMember;
-use App\Model\OrganizationMemberInterface;
+use App\Dto\CreateOrganizationInvitationInput;
+use App\Entity\OrganizationInvitation;
+use App\Model\OrganizationInvitationInterface;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\Security\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-readonly class CreateOrganizationMemberProcessor implements ProcessorInterface
+readonly class CreateOrganizationInvitationProcessor implements ProcessorInterface
 {
     public function __construct(
         #[Autowire(service: 'ApiPlatform\Doctrine\Common\State\PersistProcessor')]
@@ -43,8 +42,8 @@ readonly class CreateOrganizationMemberProcessor implements ProcessorInterface
         Operation $operation,
         array $uriVariables = [],
         array $context = []
-    ): OrganizationMemberInterface {
-        if (!$data instanceof CreateOrganizationMemberInput || !isset($uriVariables['organization'])) {
+    ): OrganizationInvitationInterface {
+        if (!$data instanceof CreateOrganizationInvitationInput || !isset($uriVariables['organization'])) {
             throw new \RuntimeException();
         }
 
@@ -60,14 +59,7 @@ readonly class CreateOrganizationMemberProcessor implements ProcessorInterface
 
         $user = $this->userRepository->findOneBy(['email' => $data->email]);
 
-        if (!$user) {
-            throw new BadRequestHttpException();
-        }
-
-        $newData = new OrganizationMember();
-        $newData->setUser($user);
-        $newData->setOrganization($organization);
-        $newData->setOwner($data->owner);
+        $newData = new OrganizationInvitation($data->email, $organization, $user);
 
         return $this->processor->process($newData, $operation, $uriVariables, $context);
     }
