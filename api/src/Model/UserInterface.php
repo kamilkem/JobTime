@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use App\Entity\OrganizationInvitation;
 use App\Entity\OrganizationMember;
 use Carbon\CarbonInterface;
 use Doctrine\Common\Collections\Collection;
@@ -64,6 +65,18 @@ interface UserInterface extends
     public function addOrganizationMember(OrganizationMember $organizationMember, bool $updateRelation = true): void;
 
     public function removeOrganizationMember(OrganizationMember $organizationMember): void;
+
+    /**
+     * @return Collection<OrganizationInvitationInterface>
+     */
+    public function getOrganizationInvitations(): Collection;
+
+    public function addOrganizationInvitation(
+        OrganizationInvitationInterface $organizationInvitation,
+        bool $updateRelation = true
+    ): void;
+
+    public function removeOrganizationInvitation(OrganizationInvitation $organizationInvitation): void;
 
     /**
      * @return Collection<UserIntegrationInterface>

@@ -35,13 +35,13 @@ use Symfony\Component\Validator\Constraints as Assert;
     uriTemplate: '/projects/{organization}/{project}/tasks/{task}.{_format}',
     operations: [
         new API\Get(
-            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object)',
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object.getOrganization())',
         ),
         new API\Patch(
-            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object)',
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object.getOrganization())',
         ),
         new API\Delete(
-            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object)',
+            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object.getOrganization())',
         ),
     ],
     uriVariables: [

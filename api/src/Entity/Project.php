@@ -22,7 +22,6 @@ use App\Model\UserResourceTrait;
 use App\Security\OrganizationVoter;
 use App\State\CreateProjectProcessor;
 use App\State\OrganizationSubresourceCollectionProvider;
-use Carbon\CarbonImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -122,7 +121,6 @@ class Project implements ProjectInterface
         #[Groups(groups: [self::GROUP_READ])]
         private ?OrganizationInterface $organization = null,
     ) {
-        $this->createdAt = CarbonImmutable::now();
         $this->tasks = new ArrayCollection();
         $this->integrations = new ArrayCollection();
     }

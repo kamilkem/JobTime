@@ -17,9 +17,7 @@ use App\Model\IntegrationInterface;
 use App\Model\IntegrationServiceEnum;
 use App\Model\IntegrationStatusEnum;
 use App\Model\ResourceTrait;
-use Carbon\CarbonImmutable;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\MappedSuperclass]
 abstract class AbstractIntegration implements IntegrationInterface
@@ -36,7 +34,6 @@ abstract class AbstractIntegration implements IntegrationInterface
         IntegrationServiceEnum $serviceName,
         IntegrationStatusEnum $status
     ) {
-        $this->createdAt = CarbonImmutable::now();
         $this->serviceName = $serviceName;
         $this->status = $status;
     }

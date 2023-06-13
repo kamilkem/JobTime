@@ -13,11 +13,6 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Carbon\CarbonInterface;
-
-interface CreatedAtInterface
+interface AuthenticationTokenInterface extends ResourceInterface
 {
-    public function getCreatedAt(): ?CarbonInterface;
-
-    public function setCreatedAt(CarbonInterface $createdAt): void;
 }

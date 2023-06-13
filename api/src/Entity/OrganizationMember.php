@@ -14,15 +14,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
-use App\Dto\CreateOrganizationMemberInput;
 use App\Model\OrganizationInterface;
 use App\Model\OrganizationMemberInterface;
 use App\Model\ResourceTrait;
 use App\Model\UserInterface;
 use App\Security\OrganizationVoter;
-use App\State\CreateOrganizationMemberProcessor;
 use App\State\OrganizationSubresourceCollectionProvider;
-use Carbon\CarbonImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -58,11 +55,6 @@ use Symfony\Component\Validator\Constraints as Assert;
         new API\GetCollection(
             provider: OrganizationSubresourceCollectionProvider::class,
         ),
-        new API\Post(
-            input: CreateOrganizationMemberInput::class,
-            read: false,
-            processor: CreateOrganizationMemberProcessor::class,
-        )
     ],
     uriVariables: [
         'organization' => new API\Link(toProperty: 'organization', fromClass: Organization::class)
@@ -79,8 +71,8 @@ class OrganizationMember implements OrganizationMemberInterface
 {
     use ResourceTrait;
 
-    public const GROUP_READ = 'organization_user:read';
-    public const GROUP_WRITE = 'organization_user:write';
+    public const GROUP_READ = 'organization_member:read';
+    public const GROUP_WRITE = 'organization_member:write';
 
     public function __construct(
         #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'organizationMembers')]
@@ -94,7 +86,6 @@ class OrganizationMember implements OrganizationMemberInterface
         #[Groups(groups: [self::GROUP_READ, self::GROUP_WRITE])]
         private bool $owner = false,
     ) {
-        $this->createdAt = CarbonImmutable::now();
     }
 
     public function getUser(): ?UserInterface
