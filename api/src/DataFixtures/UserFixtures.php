@@ -37,7 +37,7 @@ class UserFixtures extends Fixture
 
         for ($i = 0; $i < self::USER_COUNT; $i++) {
             $user = new User(
-                sprintf('%s%d@%s', self::USER_REFERENCE_NAME, $i, self::DOMAIN),
+                sprintf('%s_%d@%s', self::USER_REFERENCE_NAME, $i, self::DOMAIN),
                 $faker->firstName(),
                 $faker->lastName(),
                 CarbonImmutable::parse($faker->dateTimeInInterval('-30 years', '-18 years')),

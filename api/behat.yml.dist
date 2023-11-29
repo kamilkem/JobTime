@@ -1,0 +1,23 @@
+default:
+    formatters:
+        progress: true
+    suites:
+        default:
+            contexts:
+                - Ubirak\RestApiBehatExtension\RestApiContext
+                - Ubirak\RestApiBehatExtension\Json\JsonContext
+                - App\Tests\Behat\DoctrineContext
+            filters:
+                tags: '~@api'
+
+    extensions:
+        FriendsOfBehat\SymfonyExtension:
+          kernel:
+                environment: 'test'
+                debug: true
+                class: App\Kernel
+                path: 'src/Kernel.php'
+        Ubirak\RestApiBehatExtension\Extension:
+            rest:
+                base_url: http://php/_test.php/
+                store_response: true
