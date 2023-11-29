@@ -6,7 +6,7 @@ use Symfony\Component\ErrorHandler\Debug;
 $_SERVER['APP_ENV']   = 'test';
 $_SERVER['APP_DEBUG'] = true;
 
-require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+require_once dirname(__DIR__) . '/vendor/autoload_runtime.php';
 
 Debug::enable();
 
