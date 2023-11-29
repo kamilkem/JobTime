@@ -20,7 +20,6 @@ use App\Model\OrganizationInterface;
 use App\Model\UserInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\DependencyInjection\Attribute\Target;
 
 readonly class CreateOrganizationProcessor implements ProcessorInterface
 {
@@ -36,7 +35,7 @@ readonly class CreateOrganizationProcessor implements ProcessorInterface
         Operation $operation,
         array $uriVariables = [],
         array $context = []
-    ): OrganizationInterface {
+    ): mixed {
         $user = $this->security->getUser();
 
         if (!$user instanceof UserInterface || !$data instanceof OrganizationInterface) {

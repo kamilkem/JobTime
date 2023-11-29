@@ -18,7 +18,6 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Dto\CreateUserIntegrationInput;
 use App\Entity\UserIntegration;
 use App\Model\IntegrationStatusEnum;
-use App\Model\UserIntegrationInterface;
 use App\Model\UserInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -37,7 +36,7 @@ readonly class CreateUserIntegrationProcessor implements ProcessorInterface
         Operation $operation,
         array $uriVariables = [],
         array $context = []
-    ): UserIntegrationInterface {
+    ): mixed {
         $user = $this->security->getUser();
 
         if (!$user instanceof UserInterface || !$data instanceof CreateUserIntegrationInput) {

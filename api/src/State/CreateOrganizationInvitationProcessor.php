@@ -17,7 +17,6 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Dto\CreateOrganizationInvitationInput;
 use App\Entity\OrganizationInvitation;
-use App\Model\OrganizationInvitationInterface;
 use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use App\Security\OrganizationVoter;
@@ -42,7 +41,7 @@ readonly class CreateOrganizationInvitationProcessor implements ProcessorInterfa
         Operation $operation,
         array $uriVariables = [],
         array $context = []
-    ): OrganizationInvitationInterface {
+    ): mixed {
         if (!$data instanceof CreateOrganizationInvitationInput || !isset($uriVariables['organization'])) {
             throw new \RuntimeException();
         }

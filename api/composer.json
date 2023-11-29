@@ -17,23 +17,24 @@
         "phpdocumentor/reflection-docblock": "^5.3",
         "ramsey/uuid": "^4.7",
         "ramsey/uuid-doctrine": "^2.0",
-        "symfony/asset": "6.2.*",
-        "symfony/console": "6.2.*",
-        "symfony/dotenv": "6.2.*",
-        "symfony/expression-language": "6.2.*",
+        "runtime/frankenphp-symfony": "^0.1.1",
+        "symfony/asset": "6.4.*",
+        "symfony/console": "6.4.*",
+        "symfony/dotenv": "6.4.*",
+        "symfony/expression-language": "6.4.*",
         "symfony/flex": "^2.2",
-        "symfony/framework-bundle": "6.2.*",
+        "symfony/framework-bundle": "6.4.*",
         "symfony/mercure-bundle": "^0.3.5",
         "symfony/monolog-bundle": "^3.8",
-        "symfony/notifier": "6.2.*",
-        "symfony/property-access": "6.2.*",
-        "symfony/property-info": "6.2.*",
-        "symfony/runtime": "6.2.*",
-        "symfony/security-bundle": "6.2.*",
-        "symfony/serializer": "6.2.*",
-        "symfony/twig-bundle": "6.2.*",
-        "symfony/validator": "6.2.*",
-        "symfony/yaml": "6.2.*"
+        "symfony/notifier": "6.4.*",
+        "symfony/property-access": "6.4.*",
+        "symfony/property-info": "6.4.*",
+        "symfony/runtime": "6.4.*",
+        "symfony/security-bundle": "6.4.*",
+        "symfony/serializer": "6.4.*",
+        "symfony/twig-bundle": "6.4.*",
+        "symfony/validator": "6.4.*",
+        "symfony/yaml": "6.4.*"
     },
     "require-dev": {
         "api-platform/schema-generator": "^5.0",
@@ -42,14 +43,14 @@
         "malukenho/docheader": "^1.0",
         "phpstan/phpstan": "^1.10",
         "squizlabs/php_codesniffer": "^4.0.x-dev",
-        "symfony/browser-kit": "6.2.*",
-        "symfony/css-selector": "6.2.*",
-        "symfony/debug-bundle": "6.2.*",
+        "symfony/browser-kit": "6.4.*",
+        "symfony/css-selector": "6.4.*",
+        "symfony/debug-bundle": "6.4.*",
         "symfony/maker-bundle": "^1.44",
-        "symfony/phpunit-bridge": "6.2.*",
-        "symfony/stopwatch": "6.2.*",
-        "symfony/var-dumper": "6.2.*",
-        "symfony/web-profiler-bundle": "6.2.*"
+        "symfony/phpunit-bridge": "6.4.*",
+        "symfony/stopwatch": "6.4.*",
+        "symfony/var-dumper": "6.4.*",
+        "symfony/web-profiler-bundle": "6.4.*"
     },
     "config": {
         "optimize-autoloader": true,
@@ -115,7 +116,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.2.*",
+            "require": "6.4.*",
             "docker": false
         }
     }

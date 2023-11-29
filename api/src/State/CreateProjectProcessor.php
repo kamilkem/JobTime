@@ -38,7 +38,7 @@ readonly class CreateProjectProcessor implements ProcessorInterface
         Operation $operation,
         array $uriVariables = [],
         array $context = []
-    ): ProjectInterface {
+    ): mixed {
         if (!$data instanceof ProjectInterface || !isset($uriVariables['organization'])) {
             throw new \RuntimeException();
         }

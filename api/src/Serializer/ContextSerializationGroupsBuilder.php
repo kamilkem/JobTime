@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\MapDecorated;
 use Symfony\Component\HttpFoundation\Request;
 
 #[AsDecorator(decorates: 'api_platform.serializer.context_builder')]
-readonly class ContextSerializationGroupsBuilder implements SerializerContextBuilderInterface
+final readonly class ContextSerializationGroupsBuilder implements SerializerContextBuilderInterface
 {
     public function __construct(
         #[MapDecorated]
