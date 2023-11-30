@@ -38,8 +38,11 @@
     },
     "require-dev": {
         "api-platform/schema-generator": "^5.0",
+        "behat/behat": "^3.13",
+        "behat/mink": "^1.10",
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "fakerphp/faker": "^1.21",
+        "friends-of-behat/symfony-extension": "^2.4",
         "malukenho/docheader": "^1.0",
         "phpstan/phpstan": "^1.10",
         "squizlabs/php_codesniffer": "^4.0.x-dev",
@@ -50,7 +53,8 @@
         "symfony/phpunit-bridge": "6.4.*",
         "symfony/stopwatch": "6.4.*",
         "symfony/var-dumper": "6.4.*",
-        "symfony/web-profiler-bundle": "6.4.*"
+        "symfony/web-profiler-bundle": "6.4.*",
+        "ubirak/rest-api-behat-extension": "^8.2"
     },
     "config": {
         "optimize-autoloader": true,
