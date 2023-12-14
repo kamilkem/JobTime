@@ -1,3 +1,6 @@
 authentication_token:
     path: '%app.security.api_route%/auth/token'
     methods: ['POST']
+
+api_refresh_token:
+    path: '%app.security.api_route%/auth/refresh'

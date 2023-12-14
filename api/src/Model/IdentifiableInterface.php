@@ -17,5 +17,5 @@ use Ramsey\Uuid\UuidInterface;
 
 interface IdentifiableInterface
 {
-    public function getId(): ?UuidInterface;
+    public function getId(): UuidInterface;
 }

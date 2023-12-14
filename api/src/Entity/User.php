@@ -14,52 +14,99 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
-use App\Model\OrganizationInvitationInterface;
-use App\Model\OrganizationMemberInterface;
+use App\Dto\UserDto;
+use App\Model\InvitationInterface;
+use App\Model\MemberInterface;
 use App\Model\ResourceTrait;
 use App\Model\UserIntegrationInterface;
 use App\Model\UserInterface;
-use Carbon\CarbonInterface;
+use App\Security\UserVoter;
+use App\State\UpdateUserProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 use function array_unique;
 use function in_array;
 
 #[API\ApiResource(
-    operations: []
+    uriTemplate: '/users/{user}.{_format}',
+    operations: [
+        new API\Get(),
+        new API\Patch(
+            security: 'is_granted(\'' . UserVoter::IS_USER_INSTANCE . '\', object)',
+            input: UserDto::class,
+            processor: UpdateUserProcessor::class,
+        ),
+        new API\Delete(
+            security: 'is_granted(\'' . UserVoter::IS_USER_INSTANCE . '\', object)',
+        ),
+    ],
+    uriVariables: [
+        'user' => new API\Link(fromClass: self::class),
+    ],
+    normalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_READ],
+    ],
+    denormalizationContext: [
+        AbstractNormalizer::GROUPS => [self::GROUP_WRITE],
+    ],
 )]
 #[ORM\Entity]
 #[ORM\Table(name: '`user`')]
-class User implements UserInterface
+final class User implements UserInterface
 {
     use ResourceTrait;
 
+    public const GROUP_READ = 'user:read';
+    public const GROUP_WRITE = 'user:write';
+
+    #[ORM\Column(type: 'string')]
+    #[Groups([self::GROUP_READ])]
+    private string $email;
+
+    #[ORM\Column(type: 'string')]
+    #[Groups([self::GROUP_READ, self::GROUP_WRITE])]
+    private string $firstName;
+
+    #[ORM\Column(type: 'string')]
+    #[Groups([self::GROUP_READ, self::GROUP_WRITE])]
+    private string $lastName;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $confirmed;
+
+    #[ORM\Column(type: 'simple_array')]
+    private array $roles = [];
+
     /**
-     * @var Collection<OrganizationMemberInterface>
+     * @var Collection<MemberInterface>
      */
     #[ORM\OneToMany(
         mappedBy: 'user',
-        targetEntity: OrganizationMember::class,
+        targetEntity: Member::class,
         cascade: [
             'persist',
             'remove'
         ],
         orphanRemoval: true
     )]
-    private Collection $organizationMembers;
+    private Collection $members;
 
     #[ORM\OneToMany(
         mappedBy: 'user',
-        targetEntity: OrganizationInvitation::class,
+        targetEntity: Invitation::class,
         cascade: [
             'persist',
             'remove'
         ],
         orphanRemoval: true
     )]
-    private Collection $organizationInvitations;
+    private Collection $invitations;
 
     /**
      * @var Collection<UserIntegrationInterface>
@@ -81,25 +128,24 @@ class User implements UserInterface
     private ?string $plainPassword = null;
 
     public function __construct(
-        #[ORM\Column]
-        private string $email,
-        #[ORM\Column(nullable: true)]
-        private ?string $firstName = null,
-        #[ORM\Column(nullable: true)]
-        private ?string $lastName = null,
-        #[ORM\Column(type: 'carbon_immutable')]
-        private ?CarbonInterface $birthDate = null,
-        #[ORM\Column(type: 'boolean')]
-        private bool $confirmed = false,
-        #[ORM\Column(type: 'simple_array')]
-        private array $roles = [],
+        string $email,
+        string $firstName,
+        string $lastName,
+        bool $confirmed = false,
+        ?UuidInterface $id = null
     ) {
+        $this->email = $email;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+        $this->confirmed = $confirmed;
+        $this->id = $id ?? Uuid::uuid4();
+
         if (!in_array(self::ROLE_USER, $this->roles)) {
             $this->roles[] = self::ROLE_USER;
         }
 
-        $this->organizationMembers = new ArrayCollection();
-        $this->organizationInvitations = new ArrayCollection();
+        $this->members = new ArrayCollection();
+        $this->invitations = new ArrayCollection();
         $this->integrations = new ArrayCollection();
     }
 
@@ -128,34 +174,24 @@ class User implements UserInterface
         return array_unique($this->roles);
     }
 
-    public function getFirstName(): ?string
+    public function getFirstName(): string
     {
         return $this->firstName;
     }
 
-    public function setFirstName(?string $firstName): void
+    public function setFirstName(string $firstName): void
     {
         $this->firstName = $firstName;
     }
 
-    public function getLastName(): ?string
+    public function getLastName(): string
     {
         return $this->lastName;
     }
 
-    public function setLastName(?string $lastName): void
+    public function setLastName(string $lastName): void
     {
         $this->lastName = $lastName;
-    }
-
-    public function getBirthDate(): ?CarbonInterface
-    {
-        return $this->birthDate;
-    }
-
-    public function setBirthDate(?CarbonInterface $birthDate): void
-    {
-        $this->birthDate = $birthDate;
     }
 
     public function isConfirmed(): bool
@@ -179,55 +215,57 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection<OrganizationMemberInterface>
+     * @return Collection<MemberInterface>
      */
-    public function getOrganizationMembers(): Collection
+    public function getMembers(): Collection
     {
-        return $this->organizationMembers;
+        return $this->members;
     }
 
-    public function addOrganizationMember(OrganizationMemberInterface $organizationMember, bool $updateRelation = true): void
-    {
-        if ($this->organizationMembers->contains($organizationMember)) {
+    public function addMember(
+        MemberInterface $member,
+        bool $updateRelation = true
+    ): void {
+        if ($this->members->contains($member)) {
             return;
         }
 
-        $this->organizationMembers->add($organizationMember);
+        $this->members->add($member);
         if ($updateRelation) {
-            $organizationMember->setUser($this, false);
+            $member->setUser($this, false);
         }
     }
 
-    public function removeOrganizationMember(OrganizationMemberInterface $organizationMember): void
+    public function removeMember(MemberInterface $member): void
     {
-        $this->organizationMembers->removeElement($organizationMember);
+        $this->members->removeElement($member);
     }
 
     /**
-     * @return Collection<OrganizationInvitationInterface>
+     * @return Collection<InvitationInterface>
      */
-    public function getOrganizationInvitations(): Collection
+    public function getInvitations(): Collection
     {
-        return $this->organizationInvitations;
+        return $this->invitations;
     }
 
-    public function addOrganizationInvitation(
-        OrganizationInvitationInterface $organizationInvitation,
+    public function addInvitation(
+        InvitationInterface $invitation,
         bool $updateRelation = true
     ): void {
-        if ($this->organizationInvitations->contains($organizationInvitation)) {
+        if ($this->invitations->contains($invitation)) {
             return;
         }
 
-        $this->organizationInvitations->add($organizationInvitation);
+        $this->invitations->add($invitation);
         if ($updateRelation) {
-            $organizationInvitation->setUser($this, false);
+            $invitation->setUser($this, false);
         }
     }
 
-    public function removeOrganizationInvitation(OrganizationInvitation $organizationInvitation): void
+    public function removeInvitation(Invitation $invitation): void
     {
-        $this->organizationInvitations->removeElement($organizationInvitation);
+        $this->invitations->removeElement($invitation);
     }
 
     /**

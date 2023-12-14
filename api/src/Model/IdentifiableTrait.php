@@ -22,12 +22,10 @@ trait IdentifiableTrait
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     #[Groups(groups: [ResourceInterface::GROUP_READ])]
-    protected ?UuidInterface $id = null;
+    protected UuidInterface $id;
 
-    public function getId(): ?UuidInterface
+    public function getId(): UuidInterface
     {
         return $this->id;
     }

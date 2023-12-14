@@ -14,26 +14,16 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
-use App\Dto\CreateUserIntegrationInput;
 use App\Model\IntegrationServiceEnum;
 use App\Model\IntegrationStatusEnum;
 use App\Model\UserIntegrationInterface;
 use App\Model\UserInterface;
-use App\State\CreateUserIntegrationProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 #[API\ApiResource(
     uriTemplate: '/user/integrations.{_format}',
-    operations: [
-        new GetCollection(),
-        new Post(
-            input: CreateUserIntegrationInput::class,
-            processor: CreateUserIntegrationProcessor::class,
-        ),
-    ],
+    operations: [],
     normalizationContext: [
         AbstractNormalizer::GROUPS => [self::GROUP_READ]
     ],
@@ -42,7 +32,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
     ],
 )]
 #[ORM\Entity]
-class UserIntegration extends AbstractIntegration implements UserIntegrationInterface
+final class UserIntegration extends AbstractIntegration implements UserIntegrationInterface
 {
     public const GROUP_READ = 'user_integration:read';
     public const GROUP_WRITE = 'user_integration:write';

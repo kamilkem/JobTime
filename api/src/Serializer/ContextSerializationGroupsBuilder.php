@@ -23,7 +23,6 @@ use Symfony\Component\HttpFoundation\Request;
 final readonly class ContextSerializationGroupsBuilder implements SerializerContextBuilderInterface
 {
     public function __construct(
-        #[MapDecorated]
         private SerializerContextBuilderInterface $decorated,
     ) {
     }

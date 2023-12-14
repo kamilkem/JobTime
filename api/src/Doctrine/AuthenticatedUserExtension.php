@@ -16,19 +16,20 @@ namespace App\Doctrine;
 use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
-use App\Entity\Organization;
 use App\Entity\Task;
+use App\Entity\Team;
 use App\Entity\UserIntegration;
 use App\Model\UserInterface;
+use App\Provider\CurrentUserProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 
 use function explode;
 use function sprintf;
 
-readonly class AuthenticatedUserExtension implements QueryCollectionExtensionInterface
+final readonly class AuthenticatedUserExtension implements QueryCollectionExtensionInterface
 {
-    public function __construct(private Security $security)
+    public function __construct(private CurrentUserProviderInterface $currentUserProvider)
     {
     }
 
@@ -45,22 +46,18 @@ readonly class AuthenticatedUserExtension implements QueryCollectionExtensionInt
             return;
         }
 
-        $user = $this->security->getUser();
-
-        if (!$user instanceof UserInterface) {
-            throw new \RuntimeException();
-        }
+        $user = $this->currentUserProvider->getCurrentUser();
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
         match ($resourceClass) {
-            Organization::class => $this->applyForOrganization($rootAlias, $queryBuilder, $user),
+            Team::class => $this->applyForTeam($rootAlias, $queryBuilder, $user),
             UserIntegration::class => $this->applyForUserIntegration($rootAlias, $queryBuilder, $user),
             Task::class => $this->applyForTask($rootAlias, $queryBuilder, $user),
             default => throw new \RuntimeException()
         };
     }
 
-    private function applyForOrganization(
+    private function applyForTeam(
         string $rootAlias,
         QueryBuilder $queryBuilder,
         UserInterface $user

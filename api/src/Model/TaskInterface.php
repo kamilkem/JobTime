@@ -15,33 +15,22 @@ namespace App\Model;
 
 use Doctrine\Common\Collections\Collection;
 
-interface TaskInterface extends UserResourceInterface
+interface TaskInterface extends UserResourceInterface, NameInterface, DescriptionInterface
 {
-    public function getOrganization(): ?OrganizationInterface;
+    public function getTeam(): ?TeamInterface;
 
-    public function getProject(): ProjectInterface;
+    public function getView(): ViewInterface;
 
-    public function setProject(ProjectInterface $project, bool $updateRelation = true): void;
-
-    public function getName(): string;
-
-    public function setName(string $name): void;
-
-    public function getProjectIntegration(): ?ProjectIntegrationInterface;
-
-    public function setProjectIntegration(
-        ?ProjectIntegrationInterface $projectIntegration,
-        bool $updateRelation = true
-    ): void;
+    public function setView(ViewInterface $view, bool $updateRelation = true): void;
 
     /**
-     * @return Collection<TaskTimeEntryInterface>
+     * @return Collection<TimeEntryInterface>
      */
     public function getTimeEntries(): Collection;
 
-    public function addTimeEntry(TaskTimeEntryInterface $timeEntry, bool $updateRelation = true): void;
+    public function addTimeEntry(TimeEntryInterface $timeEntry, bool $updateRelation = true): void;
 
-    public function removeTimeEntry(TaskTimeEntryInterface $timeEntry): void;
+    public function removeTimeEntry(TimeEntryInterface $timeEntry): void;
 
     /**
      * @return Collection<UserInterface>

@@ -14,14 +14,15 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\UserIntegration;
+use App\Model\UserIntegrationInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method UserIntegration|null find($id, $lockMode = null, $lockVersion = null)
- * @method UserIntegration|null findOneBy(array $criteria, array $orderBy = null)
- * @method UserIntegration[]    findAll()
- * @method UserIntegration[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method UserIntegrationInterface|null find($id, $lockMode = null, $lockVersion = null)
+ * @method UserIntegrationInterface|null findOneBy(array $criteria, array $orderBy = null)
+ * @method UserIntegrationInterface[]    findAll()
+ * @method UserIntegrationInterface[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class UserIntegrationRepository extends ServiceEntityRepository
 {

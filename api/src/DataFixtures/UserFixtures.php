@@ -14,14 +14,12 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\User;
-use Carbon\CarbonImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 
 use function sprintf;
 
-class UserFixtures extends Fixture
+final class UserFixtures extends Fixture
 {
     use FixtureTrait;
 
@@ -33,15 +31,13 @@ class UserFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create();
-
         for ($i = 0; $i < self::USER_COUNT; $i++) {
             $user = new User(
                 sprintf('%s_%d@%s', self::USER_REFERENCE_NAME, $i, self::DOMAIN),
-                $faker->firstName(),
-                $faker->lastName(),
-                CarbonImmutable::parse($faker->dateTimeInInterval('-30 years', '-18 years')),
-                true
+                $this->getFaker()->firstName(),
+                $this->getFaker()->lastName(),
+                true,
+                $this->uuid(),
             );
 
             $user->setPlainPassword(self::PASSWORD);

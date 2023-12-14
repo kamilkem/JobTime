@@ -15,10 +15,12 @@ namespace App\Model;
 
 use App\Entity\User;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 trait CreatedByUserTrait
 {
     #[ManyToOne(targetEntity: User::class)]
+    #[Groups(ResourceInterface::GROUP_READ)]
     protected UserInterface $createdBy;
 
     public function getCreatedBy(): UserInterface

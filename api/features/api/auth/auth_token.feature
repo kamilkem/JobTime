@@ -13,6 +13,7 @@ Feature:
         """
         Then the response status code should be 200
         And the JSON node "token" should exist
+        And the JSON node "refresh_token" should exist
 
     Scenario: Reach JWT token with providing bad credentials
         When I add "content-type" header equal to "application/ld+json"

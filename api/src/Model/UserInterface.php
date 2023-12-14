@@ -13,9 +13,8 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use App\Entity\OrganizationInvitation;
-use App\Entity\OrganizationMember;
-use Carbon\CarbonInterface;
+use App\Entity\Invitation;
+use App\Entity\Member;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface as BaseUserInterface;
@@ -37,17 +36,13 @@ interface UserInterface extends
 
     public function getRoles(): array;
 
-    public function getFirstName(): ?string;
+    public function getFirstName(): string;
 
-    public function setFirstName(?string $firstName): void;
+    public function setFirstName(string $firstName): void;
 
-    public function getLastName(): ?string;
+    public function getLastName(): string;
 
-    public function setLastName(?string $lastName): void;
-
-    public function getBirthDate(): ?CarbonInterface;
-
-    public function setBirthDate(?CarbonInterface $birthDate): void;
+    public function setLastName(string $lastName): void;
 
     public function isConfirmed(): bool;
 
@@ -58,25 +53,25 @@ interface UserInterface extends
     public function setPlainPassword(?string $plainPassword): void;
 
     /**
-     * @return Collection<OrganizationMemberInterface>
+     * @return Collection<MemberInterface>
      */
-    public function getOrganizationMembers(): Collection;
+    public function getMembers(): Collection;
 
-    public function addOrganizationMember(OrganizationMember $organizationMember, bool $updateRelation = true): void;
+    public function addMember(Member $member, bool $updateRelation = true): void;
 
-    public function removeOrganizationMember(OrganizationMember $organizationMember): void;
+    public function removeMember(Member $member): void;
 
     /**
-     * @return Collection<OrganizationInvitationInterface>
+     * @return Collection<InvitationInterface>
      */
-    public function getOrganizationInvitations(): Collection;
+    public function getInvitations(): Collection;
 
-    public function addOrganizationInvitation(
-        OrganizationInvitationInterface $organizationInvitation,
+    public function addInvitation(
+        InvitationInterface $invitation,
         bool $updateRelation = true
     ): void;
 
-    public function removeOrganizationInvitation(OrganizationInvitation $organizationInvitation): void;
+    public function removeInvitation(Invitation $invitation): void;
 
     /**
      * @return Collection<UserIntegrationInterface>

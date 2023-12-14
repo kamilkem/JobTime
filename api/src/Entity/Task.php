@@ -14,39 +14,37 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
-use App\Model\OrganizationInterface;
-use App\Model\ProjectIntegrationInterface;
-use App\Model\ProjectInterface;
+use App\Model\DescriptionTrait;
+use App\Model\NameTrait;
 use App\Model\TaskInterface;
-use App\Model\TaskTimeEntryInterface;
+use App\Model\TeamInterface;
+use App\Model\TimeEntryInterface;
 use App\Model\UserInterface;
 use App\Model\UserResourceTrait;
-use App\Security\OrganizationVoter;
-use App\State\OrganizationSubresourceCollectionProvider;
+use App\Model\ViewInterface;
+use App\Security\TeamVoter;
+use App\State\TeamSubresourceCollectionProvider;
 use Carbon\CarbonImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[API\ApiResource(
-    uriTemplate: '/projects/{organization}/{project}/tasks/{task}.{_format}',
+    uriTemplate: '/tasks/{task}.{_format}',
     operations: [
         new API\Get(
-            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object.getOrganization())',
+            security: 'is_granted(\'' . TeamVoter::IS_USER_MEMBER . '\', object.getTeam())',
         ),
         new API\Patch(
-            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object.getOrganization())',
+            security: 'is_granted(\'' . TeamVoter::IS_USER_MEMBER . '\', object.getTeam())',
         ),
         new API\Delete(
-            security: 'is_granted(\'' . OrganizationVoter::IS_USER_MEMBER . '\', object.getOrganization())',
+            security: 'is_granted(\'' . TeamVoter::IS_USER_MEMBER . '\', object.getTeam())',
         ),
     ],
     uriVariables: [
-        'organization' => new API\Link(toProperty: 'organization', fromClass: Organization::class),
-        'project' => new API\Link(toProperty: 'project', fromClass: Project::class),
         'task' => new API\Link(fromClass: self::class),
     ],
     normalizationContext: [
@@ -57,18 +55,17 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[API\ApiResource(
-    uriTemplate: '/projects/{organization}/{project}/tasks.{_format}',
+    uriTemplate: '/view/{view}/tasks.{_format}',
     operations: [
         new API\GetCollection(
-            provider: OrganizationSubresourceCollectionProvider::class,
+            provider: TeamSubresourceCollectionProvider::class,
         ),
         new API\Post(
             read: false,
         ),
     ],
     uriVariables: [
-        'organization' => new API\Link(toProperty: 'organization', fromClass: Organization::class),
-        'project' => new API\Link(toProperty: 'project', fromClass: Project::class),
+        'view' => new API\Link(toProperty: 'view', fromClass: View::class),
     ],
     normalizationContext: [
         AbstractNormalizer::GROUPS => [self::GROUP_READ]
@@ -90,19 +87,25 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[ORM\Entity]
-class Task implements TaskInterface
+final class Task implements TaskInterface
 {
     use UserResourceTrait;
+    use NameTrait;
+    use DescriptionTrait;
 
     public const GROUP_READ = 'task:read';
     public const GROUP_WRITE = 'task:write';
 
+    #[ORM\ManyToOne(targetEntity: View::class, cascade: ['persist'], inversedBy: 'tasks')]
+    #[Groups(groups: [self::GROUP_READ])]
+    private ViewInterface $view;
+
     /**
-     * @var Collection<TaskTimeEntryInterface>
+     * @var Collection<TimeEntryInterface>
      */
     #[ORM\OneToMany(
         mappedBy: 'task',
-        targetEntity: TaskTimeEntry::class,
+        targetEntity: TimeEntry::class,
         cascade: [
             'persist',
             'remove'
@@ -117,75 +120,41 @@ class Task implements TaskInterface
     #[ORM\ManyToMany(targetEntity: User::class, cascade: ['persist'])]
     private Collection $assignedUsers;
 
-    public function __construct(
-        #[ORM\ManyToOne(targetEntity: Project::class, cascade: ['persist'], inversedBy: 'tasks')]
-        private ProjectInterface $project,
-        #[ORM\Column]
-        #[Assert\NotBlank]
-        #[Groups(groups: [self::GROUP_READ, self::GROUP_WRITE])]
-        private string $name,
-        #[ORM\ManyToOne(targetEntity: ProjectIntegration::class, cascade: ['persist'], inversedBy: 'tasks')]
-        private ?ProjectIntegrationInterface $projectIntegration = null,
-    ) {
+    public function __construct()
+    {
         $this->createdAt = CarbonImmutable::now();
         $this->timeEntries = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();
     }
 
-    public function getOrganization(): ?OrganizationInterface
+    public function getTeam(): ?TeamInterface
     {
-        return $this->project->getOrganization();
+        return $this->view->getTeam();
     }
 
-    public function getProject(): ProjectInterface
+    public function getView(): ViewInterface
     {
-        return $this->project;
+        return $this->view;
     }
 
-    public function setProject(ProjectInterface $project, bool $updateRelation = true): void
+    public function setView(ViewInterface $view, bool $updateRelation = true): void
     {
-        $this->project = $project;
+        $this->view = $view;
 
         if ($updateRelation) {
-            $project->addTask($this, false);
-        }
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getProjectIntegration(): ?ProjectIntegrationInterface
-    {
-        return $this->projectIntegration;
-    }
-
-    public function setProjectIntegration(
-        ?ProjectIntegrationInterface $projectIntegration,
-        bool $updateRelation = true
-    ): void {
-        $this->projectIntegration = $projectIntegration;
-
-        if ($projectIntegration && $updateRelation) {
-            $projectIntegration->addTask($this, false);
+            $view->addTask($this, false);
         }
     }
 
     /**
-     * @return Collection<TaskTimeEntryInterface>
+     * @return Collection<TimeEntryInterface>
      */
     public function getTimeEntries(): Collection
     {
         return $this->timeEntries;
     }
 
-    public function addTimeEntry(TaskTimeEntryInterface $timeEntry, bool $updateRelation = true): void
+    public function addTimeEntry(TimeEntryInterface $timeEntry, bool $updateRelation = true): void
     {
         if ($this->timeEntries->contains($timeEntry)) {
             return;
@@ -197,7 +166,7 @@ class Task implements TaskInterface
         }
     }
 
-    public function removeTimeEntry(TaskTimeEntryInterface $timeEntry): void
+    public function removeTimeEntry(TimeEntryInterface $timeEntry): void
     {
         $this->timeEntries->removeElement($timeEntry);
     }
