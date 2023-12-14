@@ -66,4 +66,4 @@ jobs:
           docker compose exec -T php bin/console -e test doctrine:database:create
           docker compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
       - name: Behat
-        run: docker compose exec -T php vendor/bin/behat
+        run: docker compose exec -T php bin/behat
