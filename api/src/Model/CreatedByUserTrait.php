@@ -14,21 +14,22 @@ declare(strict_types=1);
 namespace App\Model;
 
 use App\Entity\User;
-use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 trait CreatedByUserTrait
 {
-    #[ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
     #[Groups(ResourceInterface::GROUP_READ)]
-    protected UserInterface $createdBy;
+    protected ?UserInterface $createdBy;
 
-    public function getCreatedBy(): UserInterface
+    public function getCreatedBy(): ?UserInterface
     {
         return $this->createdBy;
     }
 
-    public function setCreatedBy(UserInterface $createdBy): void
+    public function setCreatedBy(?UserInterface $createdBy): void
     {
         $this->createdBy = $createdBy;
     }

@@ -13,28 +13,30 @@ declare(strict_types=1);
 
 namespace App\Tests\Behat;
 
-use App\DataFixtures\UserFixtures;
 use Behat\Behat\Context\Context;
 use Behat\Hook\BeforeScenario;
+use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
-use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-readonly class DoctrineContext implements Context
+readonly class FixturesContext implements Context
 {
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        #[Autowire(service: 'doctrine.fixtures.loader')]
+        private SymfonyFixturesLoader $loader
+    ) {
     }
 
     #[BeforeScenario]
     public function loadDataFixtures(): void
     {
-        $loader = new Loader();
-        $loader->addFixture(new UserFixtures());
+        $fixtures = $this->loader->getFixtures();
 
         $purger = new ORMPurger();
         $executor = new ORMExecutor($this->entityManager, $purger);
-        $executor->execute($loader->getFixtures());
+        $executor->execute($fixtures);
     }
 }

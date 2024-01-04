@@ -11,10 +11,11 @@
 
 declare(strict_types=1);
 
-namespace App\Model;
+namespace App\Http\Provider;
 
-enum IntegrationStatusEnum: string
+use App\Model\UserInterface;
+
+interface CurrentUserProviderInterface
 {
-    case ACTIVE = 'active';
-    case INACTIVE = 'inactive';
+    public function getCurrentUser(): UserInterface;
 }

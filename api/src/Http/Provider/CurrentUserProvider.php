@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace App\Provider;
+namespace App\Http\Provider;
 
 use App\Model\UserInterface;
 use Symfony\Bundle\SecurityBundle\Security;

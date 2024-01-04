@@ -13,26 +13,27 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Entity\Team;
-use App\Model\TeamInterface;
+use App\Entity\User;
+use App\Model\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
-class TeamDto implements InitializableDtoInterface
+class UserInput implements InitializableDtoInterface
 {
-    /** @var string */
-    #[Assert\Type(type: ['string'])]
-    #[Groups([Team::GROUP_WRITE])]
-    public string $name;
+    #[Groups([User::GROUP_WRITE])]
+    public string $firstName;
+
+    #[Groups([User::GROUP_WRITE])]
+    public string $lastName;
 
     public static function initialize(object $fromObject): self
     {
-        if (!$fromObject instanceof TeamInterface) {
+        if (!$fromObject instanceof UserInterface) {
             throw new \RuntimeException();
         }
 
         $object = new self();
-        $object->name = $fromObject->getName();
+        $object->firstName = $fromObject->getFirstName();
+        $object->lastName = $fromObject->getLastName();
 
         return $object;
     }

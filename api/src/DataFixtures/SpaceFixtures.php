@@ -13,21 +13,22 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
-use App\Entity\Member;
+use App\Entity\Space;
 use App\Model\TeamInterface;
-use App\Model\UserInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-final class MemberFixtures extends Fixture implements DependentFixtureInterface
+final class SpaceFixtures extends Fixture implements DependentFixtureInterface
 {
     use FixtureTrait;
+
+    public const int COUNT = 3;
+    public const string REFERENCE_NAME = 'space';
 
     public function getDependencies(): array
     {
         return [
-            UserFixtures::class,
             TeamFixtures::class,
         ];
     }
@@ -37,20 +38,20 @@ final class MemberFixtures extends Fixture implements DependentFixtureInterface
         /** @var TeamInterface $team */
         $team = $this->getReference(TeamFixtures::REFERENCE_NAME);
 
-        for ($i = 0; $i < UserFixtures::COUNT; $i++) {
-            /** @var UserInterface $user */
-            $user = $this->getReference($this->createReferenceName(UserFixtures::REFERENCE_NAME, $i));
+        for ($i = 0; $i < self::COUNT; $i++) {
+            $space = new Space(
+                $team,
+                $this->getFaker()->word(),
+                $this->getFaker()->sentence(),
+                $this->uuid()
+            );
 
-            $member = new Member($user, $team, false, $this->uuid());
-            $user->addMember($member, false);
-            $team->addMember($member, false);
+            $space->setCreatedBy($this->getRandomUser());
 
-            if (0 === $i) {
-                $member->setOwner(true);
-            }
-
-            $manager->persist($member);
-            $manager->flush();
+            $manager->persist($space);
+            $this->addReference($this->createReferenceName(self::REFERENCE_NAME, $i), $space);
         }
+
+        $manager->flush();
     }
 }

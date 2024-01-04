@@ -15,7 +15,7 @@ namespace App\State;
 
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('app_initializable_processor')]
+#[AutoconfigureTag(name: 'app_initializable_processor')]
 interface InitializableProcessorInterface
 {
     public function initialize(mixed $data, string $class, ?string $format = null, array $context = []): object;

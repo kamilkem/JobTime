@@ -11,11 +11,11 @@
 
 declare(strict_types=1);
 
-namespace App\Model;
+namespace App\Factory\Resource;
 
-interface CreatedByUserInterface
+use App\Model\TeamInterface;
+
+interface TeamFactoryInterface extends ResourceFactoryInterface
 {
-    public function getCreatedBy(): ?UserInterface;
-
-    public function setCreatedBy(?UserInterface $createdBy): void;
+    public function create(string $name): TeamInterface;
 }

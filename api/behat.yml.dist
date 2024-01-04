@@ -6,7 +6,8 @@ default:
             contexts:
                 - Ubirak\RestApiBehatExtension\RestApiContext
                 - Ubirak\RestApiBehatExtension\Json\JsonContext
-                - App\Tests\Behat\DoctrineContext
+                - App\Tests\Behat\FixturesContext
+                - App\Tests\Behat\AuthContext
             filters:
                 tags: '~@api'
 

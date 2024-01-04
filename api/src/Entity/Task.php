@@ -87,16 +87,17 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
     ],
 )]
 #[ORM\Entity]
-final class Task implements TaskInterface
+class Task implements TaskInterface
 {
     use UserResourceTrait;
     use NameTrait;
     use DescriptionTrait;
 
-    public const GROUP_READ = 'task:read';
-    public const GROUP_WRITE = 'task:write';
+    public const string GROUP_READ = 'task:read';
+    public const string GROUP_WRITE = 'task:write';
 
     #[ORM\ManyToOne(targetEntity: View::class, cascade: ['persist'], inversedBy: 'tasks')]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(groups: [self::GROUP_READ])]
     private ViewInterface $view;
 
