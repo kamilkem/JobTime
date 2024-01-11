@@ -84,11 +84,11 @@ class Invitation implements InvitationInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?UserInterface $user = null;
 
-    #[ORM\Column(type: 'carbon_immutable', nullable: true)]
+    #[ORM\Column(type: 'carbondatetime_immutable', nullable: true)]
     #[Groups(groups: [self::GROUP_READ])]
     private ?CarbonInterface $acceptedAt = null;
 
-    #[ORM\Column(type: 'carbon_immutable', nullable: true)]
+    #[ORM\Column(type: 'carbondatetime_immutable', nullable: true)]
     #[Groups(groups: [self::GROUP_READ])]
     private ?CarbonInterface $canceledAt = null;
 

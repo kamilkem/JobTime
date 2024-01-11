@@ -6,9 +6,9 @@ doctrine:
         # either here or in the DATABASE_URL env var (see .env file)
         #server_version: '15'
         types:
-            uuid: 'Ramsey\Uuid\Doctrine\UuidType'
-            carbon_immutable: Carbon\Doctrine\CarbonImmutableType
-            carbon: Carbon\Doctrine\CarbonType
+            uuid: Ramsey\Uuid\Doctrine\UuidType
+            carbondatetime_immutable: DoctrineExtensions\Types\CarbonImmutableDateTimeType
+            carbondatetime: DoctrineExtensions\Types\CarbonDateTimeType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 trait CreatedAtTrait
 {
-    #[ORM\Column(type: 'carbon_immutable')]
+    #[ORM\Column(type: 'carbondatetime_immutable')]
     #[Groups(groups: [ResourceInterface::GROUP_READ])]
     protected ?CarbonInterface $createdAt = null;
 

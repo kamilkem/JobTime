@@ -32,10 +32,10 @@ class TimeEntry implements TimeEntryInterface
     #[ORM\JoinColumn(nullable: false)]
     private TaskInterface $task;
 
-    #[ORM\Column(type: 'carbon_immutable')]
+    #[ORM\Column(type: 'carbondatetime_immutable')]
     private CarbonInterface $startDate;
 
-    #[ORM\Column(type: 'carbon_immutable', nullable: true)]
+    #[ORM\Column(type: 'carbondatetime_immutable', nullable: true)]
     private ?CarbonInterface $endDate;
 
     public function __construct()
