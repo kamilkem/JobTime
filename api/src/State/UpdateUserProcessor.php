@@ -14,14 +14,14 @@ declare(strict_types=1);
 namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
-use App\Dto\UserDto;
+use App\Dto\UserInput;
 use App\Model\UserInterface;
 
 readonly class UpdateUserProcessor extends AbstractUpdateProcessor
 {
     protected function prepare(mixed $data, Operation $operation, object $object): UserInterface
     {
-        if (!$data instanceof UserDto || !$object instanceof UserInterface) {
+        if (!$data instanceof UserInput || !$object instanceof UserInterface) {
             throw new \RuntimeException();
         }
 

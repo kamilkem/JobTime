@@ -15,7 +15,7 @@ namespace App\Model;
 
 interface CreatedByUserInterface
 {
-    public function getCreatedBy(): UserInterface;
+    public function getCreatedBy(): ?UserInterface;
 
-    public function setCreatedBy(UserInterface $createdBy): void;
+    public function setCreatedBy(?UserInterface $createdBy): void;
 }

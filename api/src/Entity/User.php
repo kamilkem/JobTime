@@ -14,12 +14,13 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
-use App\Dto\UserDto;
+use App\Dto\UserInput;
 use App\Model\InvitationInterface;
 use App\Model\MemberInterface;
 use App\Model\ResourceTrait;
-use App\Model\UserIntegrationInterface;
 use App\Model\UserInterface;
+use App\Repository\UserRepository;
+use App\Repository\UserRepositoryInterface;
 use App\Security\UserVoter;
 use App\State\UpdateUserProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -39,7 +40,7 @@ use function in_array;
         new API\Get(),
         new API\Patch(
             security: 'is_granted(\'' . UserVoter::IS_USER_INSTANCE . '\', object)',
-            input: UserDto::class,
+            input: UserInput::class,
             processor: UpdateUserProcessor::class,
         ),
         new API\Delete(
@@ -58,12 +59,12 @@ use function in_array;
 )]
 #[ORM\Entity]
 #[ORM\Table(name: '`user`')]
-final class User implements UserInterface
+class User implements UserInterface
 {
     use ResourceTrait;
 
-    public const GROUP_READ = 'user:read';
-    public const GROUP_WRITE = 'user:write';
+    public const string GROUP_READ = 'user:read';
+    public const string GROUP_WRITE = 'user:write';
 
     #[ORM\Column(type: 'string')]
     #[Groups([self::GROUP_READ])]
@@ -108,21 +109,7 @@ final class User implements UserInterface
     )]
     private Collection $invitations;
 
-    /**
-     * @var Collection<UserIntegrationInterface>
-     */
-    #[ORM\OneToMany(
-        mappedBy: 'user',
-        targetEntity: UserIntegration::class,
-        cascade: [
-            'persist',
-            'remove'
-        ],
-        orphanRemoval: true
-    )]
-    private Collection $integrations;
-
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $password = null;
 
     private ?string $plainPassword = null;
@@ -146,7 +133,6 @@ final class User implements UserInterface
 
         $this->members = new ArrayCollection();
         $this->invitations = new ArrayCollection();
-        $this->integrations = new ArrayCollection();
     }
 
     public function getEmail(): string
@@ -266,31 +252,6 @@ final class User implements UserInterface
     public function removeInvitation(Invitation $invitation): void
     {
         $this->invitations->removeElement($invitation);
-    }
-
-    /**
-     * @return Collection<UserIntegrationInterface>
-     */
-    public function getIntegrations(): Collection
-    {
-        return $this->integrations;
-    }
-
-    public function addIntegration(UserIntegrationInterface $integration, bool $updateRelation = true): void
-    {
-        if ($this->integrations->contains($integration)) {
-            return;
-        }
-
-        $this->integrations->add($integration);
-        if ($updateRelation) {
-            $integration->setUser($this, false);
-        }
-    }
-
-    public function removeIntegration(UserIntegrationInterface $integration): void
-    {
-        $this->integrations->removeElement($integration);
     }
 
     public function getUserIdentifier(): string

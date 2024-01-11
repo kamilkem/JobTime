@@ -11,9 +11,15 @@
 
 declare(strict_types=1);
 
-namespace App\Model;
+namespace App\Factory\Resource;
 
-enum IntegrationServiceEnum: string
+use App\Entity\Team;
+use App\Model\TeamInterface;
+
+final readonly class TeamFactory implements TeamFactoryInterface
 {
-    case GITHUB = 'github';
+    public function create(string $name): TeamInterface
+    {
+        return new Team($name);
+    }
 }

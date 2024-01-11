@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\DataFixtures\Faker\FakerTrait;
+use App\Model\UserInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -21,7 +22,7 @@ trait FixtureTrait
 {
     use FakerTrait;
 
-    public function createReferenceName(string $name, string|int $suffix, string $separator = '_'): string
+    protected function createReferenceName(string $name, string|int $suffix, string $separator = '_'): string
     {
         if ($name[-1] === $separator) {
             $name = substr($name, 0, -1);
@@ -30,8 +31,29 @@ trait FixtureTrait
         return sprintf('%s%s%s', $name, $separator, $suffix);
     }
 
-    public function uuid(): UuidInterface
+    protected function uuid(): UuidInterface
     {
         return Uuid::fromString($this->getFaker()->uuid());
+    }
+
+    protected function getRandomUser(): UserInterface
+    {
+        /** @var UserInterface $user */
+        $user = $this->getReference(
+            $this->createReferenceName(
+                UserFixtures::REFERENCE_NAME,
+                $this->getFaker()->numberBetween(0, UserFixtures::COUNT - 1)
+            )
+        );
+
+        return $user;
+    }
+
+    protected function getFirstUser(): UserInterface
+    {
+        /** @var UserInterface $user */
+        $user = $this->getReference($this->createReferenceName(UserFixtures::REFERENCE_NAME, 0));
+
+        return $user;
     }
 }

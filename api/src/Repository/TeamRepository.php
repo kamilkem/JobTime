@@ -14,17 +14,10 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Team;
-use App\Model\TeamInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @method TeamInterface|null find($id, $lockMode = null, $lockVersion = null)
- * @method TeamInterface|null findOneBy(array $criteria, array $orderBy = null)
- * @method TeamInterface[]    findAll()
- * @method TeamInterface[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class TeamRepository extends ServiceEntityRepository
+class TeamRepository extends ServiceEntityRepository implements TeamRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

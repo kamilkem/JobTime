@@ -65,12 +65,12 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[ORM\Entity]
-final class Invitation implements InvitationInterface
+class Invitation implements InvitationInterface
 {
     use UserResourceTrait;
 
-    public const GROUP_READ = 'invitation:read';
-    public const GROUP_WRITE = 'invitation:write';
+    public const string GROUP_READ = 'invitation:read';
+    public const string GROUP_WRITE = 'invitation:write';
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
@@ -84,11 +84,11 @@ final class Invitation implements InvitationInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?UserInterface $user = null;
 
-    #[ORM\Column(type: 'carbon_immutable', nullable: true)]
+    #[ORM\Column(type: 'carbondatetime_immutable', nullable: true)]
     #[Groups(groups: [self::GROUP_READ])]
     private ?CarbonInterface $acceptedAt = null;
 
-    #[ORM\Column(type: 'carbon_immutable', nullable: true)]
+    #[ORM\Column(type: 'carbondatetime_immutable', nullable: true)]
     #[Groups(groups: [self::GROUP_READ])]
     private ?CarbonInterface $canceledAt = null;
 

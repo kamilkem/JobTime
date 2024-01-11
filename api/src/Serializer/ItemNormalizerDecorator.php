@@ -34,7 +34,7 @@ class ItemNormalizerDecorator implements NormalizerInterface, DenormalizerInterf
     use SerializerAwareTrait;
 
     public function __construct(
-        private AbstractItemNormalizer $decorated,
+        private readonly AbstractItemNormalizer $decorated,
         /** @var iterable<InitializableProcessorInterface> */
         #[TaggedIterator(tag: 'app_initializable_processor')]
         private readonly iterable $processors
@@ -74,9 +74,9 @@ class ItemNormalizerDecorator implements NormalizerInterface, DenormalizerInterf
         return $this->decorated->denormalize($data, $class, $format, $context);
     }
 
-    public function supportsDenormalization(mixed $data, string $class, string $format = null): bool
+    public function supportsDenormalization(mixed $data, string $class, string $format = null, array $context = []): bool
     {
-        return $this->decorated->supportsDenormalization($data, $class, $format);
+        return $this->decorated->supportsDenormalization($data, $class, $format, $context);
     }
 
     public function normalize(mixed $object, string $format = null, array $context = []): mixed
@@ -86,8 +86,13 @@ class ItemNormalizerDecorator implements NormalizerInterface, DenormalizerInterf
         return $this->decorated->normalize($object, $format, $context);
     }
 
-    public function supportsNormalization(mixed $data, string $format = null): bool
+    public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
     {
-        return $this->decorated->supportsNormalization($data, $format);
+        return $this->decorated->supportsNormalization($data, $format, $context);
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return $this->decorated->getSupportedTypes($format);
     }
 }

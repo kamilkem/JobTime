@@ -25,6 +25,8 @@ use App\State\TeamSubresourceCollectionProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
@@ -69,16 +71,17 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
     ],
 )]
 #[ORM\Entity]
-final class Space implements SpaceInterface
+class Space implements SpaceInterface
 {
     use UserResourceTrait;
     use NameTrait;
     use DescriptionTrait;
 
-    public const GROUP_READ = 'space:read';
-    public const GROUP_WRITE = 'space:write';
+    public const string GROUP_READ = 'space:read';
+    public const string GROUP_WRITE = 'space:write';
 
     #[ORM\ManyToOne(targetEntity: Team::class, cascade: ['persist'], inversedBy: 'spaces')]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(groups: [self::GROUP_READ])]
     private TeamInterface $team;
 
@@ -97,8 +100,17 @@ final class Space implements SpaceInterface
     #[Groups(groups: [self::GROUP_READ])]
     private Collection $directories;
 
-    public function __construct()
-    {
+    public function __construct(
+        TeamInterface $team,
+        string $name,
+        ?string $description,
+        ?UuidInterface $id = null,
+    ) {
+        $this->team = $team;
+        $this->name = $name;
+        $this->description = $description;
+        $this->id = $id ?? Uuid::uuid4();
+
         $this->directories = new ArrayCollection();
     }
 

@@ -20,8 +20,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 trait IdentifiableTrait
 {
+    /**
+     * @var UuidInterface
+     */
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
     #[Groups(groups: [ResourceInterface::GROUP_READ])]
     protected UuidInterface $id;
 

@@ -72,13 +72,4 @@ interface UserInterface extends
     ): void;
 
     public function removeInvitation(Invitation $invitation): void;
-
-    /**
-     * @return Collection<UserIntegrationInterface>
-     */
-    public function getIntegrations(): Collection;
-
-    public function addIntegration(UserIntegrationInterface $integration, bool $updateRelation = true): void;
-
-    public function removeIntegration(UserIntegrationInterface $integration): void;
 }

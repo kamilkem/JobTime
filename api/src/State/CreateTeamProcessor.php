@@ -14,37 +14,34 @@ declare(strict_types=1);
 namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
-use App\Dto\TeamDto;
-use App\Entity\Member;
-use App\Entity\Team;
-use App\Provider\CurrentUserProviderInterface;
+use App\Dto\TeamInput;
+use App\Factory\Resource\MemberFactoryInterface;
+use App\Factory\Resource\TeamFactoryInterface;
+use App\Http\Provider\CurrentUserProviderInterface;
+use App\Model\TeamInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 readonly class CreateTeamProcessor extends AbstractCreateProcessor
 {
     public function __construct(
         EntityManagerInterface $entityManager,
-        private CurrentUserProviderInterface $currentUserProvider
+        private CurrentUserProviderInterface $currentUserProvider,
+        private TeamFactoryInterface $teamFactory,
+        private MemberFactoryInterface $memberFactory,
     ) {
         parent::__construct($entityManager);
     }
 
-    protected function prepare(mixed $data, Operation $operation): Team
+    protected function prepare(mixed $data, Operation $operation): TeamInterface
     {
-        if (!$data instanceof TeamDto) {
+        if (!$data instanceof TeamInput) {
             throw new \RuntimeException();
         }
 
         $user = $this->currentUserProvider->getCurrentUser();
-        $team = new Team($data->name);
-        $member = new Member(
-            $user,
-            $team,
-            true,
-        );
+        $team = $this->teamFactory->create($data->name);
 
-        $user->addMember($member, false);
-        $team->addMember($member, false);
+        $this->memberFactory->create($user, $team, true);
 
         return $team;
     }

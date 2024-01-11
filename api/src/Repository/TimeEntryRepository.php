@@ -14,17 +14,10 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\TimeEntry;
-use App\Model\TimeEntryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @method TimeEntryInterface|null find($id, $lockMode = null, $lockVersion = null)
- * @method TimeEntryInterface|null findOneBy(array $criteria, array $orderBy = null)
- * @method TimeEntryInterface[]    findAll()
- * @method TimeEntryInterface[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class TimeEntryRepository extends ServiceEntityRepository
+class TimeEntryRepository extends ServiceEntityRepository implements TimeEntryRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

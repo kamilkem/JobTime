@@ -21,16 +21,16 @@ final class TeamFixtures extends Fixture
 {
     use FixtureTrait;
 
-    public const TEAM_REFERENCE_NAME = 'team';
+    public const string REFERENCE_NAME = 'team';
 
-    private const TEAM_NAME = 'JobTime';
+    private const string TEAM_NAME = 'JobTime';
 
     public function load(ObjectManager $manager): void
     {
         $team = new Team(self::TEAM_NAME, $this->uuid());
 
         $manager->persist($team);
-        $this->addReference(self::TEAM_REFERENCE_NAME, $team);
+        $this->addReference(self::REFERENCE_NAME, $team);
 
         $manager->flush();
     }

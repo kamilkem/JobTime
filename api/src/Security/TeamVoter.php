@@ -22,15 +22,15 @@ use function in_array;
 
 class TeamVoter extends Voter
 {
-    public const IS_USER_OWNER = 'team_is_user_owner';
-    public const IS_USER_MEMBER = 'team_is_user_member';
+    public const string IS_USER_OWNER = 'team_is_user_owner';
+    public const string IS_USER_MEMBER = 'team_is_user_member';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
         if (
             !in_array($attribute, [
-            self::IS_USER_OWNER,
-            self::IS_USER_MEMBER,
+                self::IS_USER_OWNER,
+                self::IS_USER_MEMBER,
             ])
         ) {
             return false;
