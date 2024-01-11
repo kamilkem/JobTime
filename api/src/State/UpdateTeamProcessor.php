@@ -14,14 +14,14 @@ declare(strict_types=1);
 namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
-use App\Dto\TeamDto;
+use App\Dto\TeamInput;
 use App\Model\TeamInterface;
 
 readonly class UpdateTeamProcessor extends AbstractUpdateProcessor
 {
     protected function prepare(mixed $data, Operation $operation, object $object): TeamInterface
     {
-        if (!$data instanceof TeamDto || !$object instanceof TeamInterface) {
+        if (!$data instanceof TeamInput || !$object instanceof TeamInterface) {
             throw new \RuntimeException();
         }
 

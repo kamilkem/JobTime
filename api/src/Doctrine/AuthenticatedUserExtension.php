@@ -18,11 +18,9 @@ use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
 use App\Entity\Task;
 use App\Entity\Team;
-use App\Entity\UserIntegration;
+use App\Http\Provider\CurrentUserProviderInterface;
 use App\Model\UserInterface;
-use App\Provider\CurrentUserProviderInterface;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Bundle\SecurityBundle\Security;
 
 use function explode;
 use function sprintf;
@@ -51,7 +49,6 @@ final readonly class AuthenticatedUserExtension implements QueryCollectionExtens
         $rootAlias = $queryBuilder->getRootAliases()[0];
         match ($resourceClass) {
             Team::class => $this->applyForTeam($rootAlias, $queryBuilder, $user),
-            UserIntegration::class => $this->applyForUserIntegration($rootAlias, $queryBuilder, $user),
             Task::class => $this->applyForTask($rootAlias, $queryBuilder, $user),
             default => throw new \RuntimeException()
         };
@@ -65,16 +62,6 @@ final readonly class AuthenticatedUserExtension implements QueryCollectionExtens
         $queryBuilder
             ->join(sprintf('%s.members', $rootAlias), '_member')
             ->andWhere($queryBuilder->expr()->eq('_member.user', ':user'))
-            ->setParameter('user', $user);
-    }
-
-    private function applyForUserIntegration(
-        string $rootAlias,
-        QueryBuilder $queryBuilder,
-        UserInterface $user
-    ): void {
-        $queryBuilder
-            ->andWhere($queryBuilder->expr()->eq(sprintf('%s.user', $rootAlias), ':user'))
             ->setParameter('user', $user);
     }
 

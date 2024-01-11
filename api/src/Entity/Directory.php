@@ -31,16 +31,17 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: []
 )]
 #[ORM\Entity]
-final class Directory implements DirectoryInterface
+class Directory implements DirectoryInterface
 {
     use UserResourceTrait;
     use NameTrait;
     use DescriptionTrait;
 
-    public const GROUP_READ = 'directory:read';
-    public const GROUP_WRITE = 'directory:write';
+    public const string GROUP_READ = 'directory:read';
+    public const string GROUP_WRITE = 'directory:write';
 
     #[ORM\ManyToOne(targetEntity: Space::class, cascade: ['persist'], inversedBy: 'directories')]
+    #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull]
     #[Groups(groups: [self::GROUP_READ])]
     private SpaceInterface $space;

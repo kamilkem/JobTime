@@ -25,7 +25,6 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[API\ApiResource(
     uriTemplate: '/members/{member}.{_format}',
@@ -68,16 +67,17 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[ORM\Entity]
-final class Member implements MemberInterface
+class Member implements MemberInterface
 {
     use ResourceTrait;
 
     #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'members')]
-    #[Assert\NotNull]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(groups: [self::GROUP_READ, self::GROUP_WRITE])]
     private UserInterface $user;
 
     #[ORM\ManyToOne(targetEntity: Team::class, cascade: ['persist'], inversedBy: 'members')]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(groups: [self::GROUP_READ])]
     private TeamInterface $team;
 
@@ -85,8 +85,8 @@ final class Member implements MemberInterface
     #[Groups(groups: [self::GROUP_READ, self::GROUP_WRITE])]
     private bool $owner;
 
-    public const GROUP_READ = 'member:read';
-    public const GROUP_WRITE = 'member:write';
+    public const string GROUP_READ = 'member:read';
+    public const string GROUP_WRITE = 'member:write';
 
     public function __construct(
         UserInterface $user,

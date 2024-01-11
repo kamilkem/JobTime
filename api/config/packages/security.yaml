@@ -44,7 +44,7 @@ security:
         - { path: "%app.security.api_regex%/auth", roles: PUBLIC_ACCESS }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
-when@test:
+when@test: &security_test
     security:
         password_hashers:
             # By default, password hashers are resource intensive and take time. This is
@@ -56,3 +56,5 @@ when@test:
                 cost: 4 # Lowest possible value for bcrypt
                 time_cost: 3 # Lowest possible value for argon
                 memory_cost: 10 # Lowest possible value for argon
+
+when@dev: *security_test

@@ -161,18 +161,6 @@
             "src/Entity/RefreshToken.php"
         ]
     },
-    "knplabs/github-api": {
-        "version": "3.11",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "main",
-            "version": "2.6",
-            "ref": "a7d5781e4a8e84f1c238c43e4c9bb806f01d8a3f"
-        },
-        "files": [
-            "config/packages/github_api.yaml"
-        ]
-    },
     "laminas/laminas-code": {
         "version": "4.5.1"
     },
@@ -224,6 +212,18 @@
     "nikic/php-parser": {
         "version": "v4.13.2"
     },
+    "nyholm/psr7": {
+        "version": "1.8",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "4a8c0345442dcca1d8a2c65633dcf0285dd5a5a2"
+        },
+        "files": [
+            "config/packages/nyholm_psr7.yaml"
+        ]
+    },
     "ocramius/package-versions": {
         "version": "1.9.0"
     },
@@ -262,6 +262,20 @@
             "version": "1.0",
             "ref": "5e490cc197fb6bb1ae22e5abbc531ddc633b6767"
         }
+    },
+    "phpunit/phpunit": {
+        "version": "10.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "9.6",
+            "ref": "7364a21d87e658eb363c5020c072ecfdc12e2326"
+        },
+        "files": [
+            ".env.test",
+            "phpunit.xml.dist",
+            "tests/bootstrap.php"
+        ]
     },
     "psr/cache": {
         "version": "3.0.0"

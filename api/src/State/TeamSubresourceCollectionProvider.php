@@ -15,7 +15,7 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Repository\TeamRepository;
+use App\Repository\TeamRepositoryInterface;
 use App\Security\TeamVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -28,7 +28,7 @@ readonly class TeamSubresourceCollectionProvider implements ProviderInterface
         #[Autowire(service: 'ApiPlatform\Doctrine\Orm\State\CollectionProvider')]
         private ProviderInterface $provider,
         private Security $security,
-        private TeamRepository $teamRepository
+        private TeamRepositoryInterface $teamRepository
     ) {
     }
 

@@ -11,11 +11,8 @@
 
 declare(strict_types=1);
 
-namespace App\Provider;
+namespace App\Factory\Resource;
 
-use App\Model\UserInterface;
-
-interface CurrentUserProviderInterface
+interface ResourceFactoryInterface
 {
-    public function getCurrentUser(): UserInterface;
 }

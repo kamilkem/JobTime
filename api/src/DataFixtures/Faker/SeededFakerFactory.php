@@ -39,6 +39,12 @@ final class SeededFakerFactory
         return self::$fakers[$name];
     }
 
+    public static function refresh(): void
+    {
+        self::$fakers = [];
+        self::$seeds = [];
+    }
+
     private static function generateFakerSeed(string $name): int
     {
         $ord     = (array) unpack('C*', $name);

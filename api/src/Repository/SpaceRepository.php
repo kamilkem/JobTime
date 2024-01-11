@@ -14,17 +14,10 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Space;
-use App\Model\SpaceInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @method SpaceInterface|null find($id, $lockMode = null, $lockVersion = null)
- * @method SpaceInterface|null findOneBy(array $criteria, array $orderBy = null)
- * @method SpaceInterface[]    findAll()
- * @method SpaceInterface[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class SpaceRepository extends ServiceEntityRepository
+class SpaceRepository extends ServiceEntityRepository implements SpaceRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

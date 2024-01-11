@@ -35,11 +35,11 @@ final class MemberFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         /** @var TeamInterface $team */
-        $team = $this->getReference(TeamFixtures::TEAM_REFERENCE_NAME);
+        $team = $this->getReference(TeamFixtures::REFERENCE_NAME);
 
-        for ($i = 0; $i < UserFixtures::USER_COUNT; $i++) {
+        for ($i = 0; $i < UserFixtures::COUNT; $i++) {
             /** @var UserInterface $user */
-            $user = $this->getReference($this->createReferenceName(UserFixtures::USER_REFERENCE_NAME, $i));
+            $user = $this->getReference($this->createReferenceName(UserFixtures::REFERENCE_NAME, $i));
 
             $member = new Member($user, $team, false, $this->uuid());
             $user->addMember($member, false);

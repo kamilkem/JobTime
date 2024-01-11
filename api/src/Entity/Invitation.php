@@ -65,12 +65,12 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[ORM\Entity]
-final class Invitation implements InvitationInterface
+class Invitation implements InvitationInterface
 {
     use UserResourceTrait;
 
-    public const GROUP_READ = 'invitation:read';
-    public const GROUP_WRITE = 'invitation:write';
+    public const string GROUP_READ = 'invitation:read';
+    public const string GROUP_WRITE = 'invitation:write';
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]

@@ -18,25 +18,24 @@ use App\Model\TaskInterface;
 use App\Model\TimeEntryInterface;
 use App\Model\UserResourceTrait;
 use Carbon\CarbonInterface;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping as ORM;
 
 #[API\ApiResource(
     operations: []
 )]
-#[Entity]
-final class TimeEntry implements TimeEntryInterface
+#[ORM\Entity]
+class TimeEntry implements TimeEntryInterface
 {
     use UserResourceTrait;
 
-    #[ManyToOne(targetEntity: Task::class, cascade: ['persist'], inversedBy: 'timeEntries')]
+    #[ORM\ManyToOne(targetEntity: Task::class, cascade: ['persist'], inversedBy: 'timeEntries')]
+    #[ORM\JoinColumn(nullable: false)]
     private TaskInterface $task;
 
-    #[Column(type: 'carbon_immutable')]
+    #[ORM\Column(type: 'carbon_immutable')]
     private CarbonInterface $startDate;
 
-    #[Column(type: 'carbon_immutable', nullable: true)]
+    #[ORM\Column(type: 'carbon_immutable', nullable: true)]
     private ?CarbonInterface $endDate;
 
     public function __construct()

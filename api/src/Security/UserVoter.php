@@ -21,13 +21,13 @@ use function in_array;
 
 class UserVoter extends Voter
 {
-    public const IS_USER_INSTANCE = 'user_is_user_instance';
+    public const string IS_USER_INSTANCE = 'user_is_user_instance';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
         if (
             !in_array($attribute, [
-            self::IS_USER_INSTANCE,
+                self::IS_USER_INSTANCE,
             ])
         ) {
             return false;

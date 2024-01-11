@@ -14,17 +14,10 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Invitation;
-use App\Model\InvitationInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @method InvitationInterface|null find($id, $lockMode = null, $lockVersion = null)
- * @method InvitationInterface|null findOneBy(array $criteria, array $orderBy = null)
- * @method InvitationInterface[]    findAll()
- * @method InvitationInterface[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class InvitationRepository extends ServiceEntityRepository
+class InvitationRepository extends ServiceEntityRepository implements InvitationRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
-use App\Dto\TeamDto;
+use App\Dto\TeamInput;
 use App\Model\InvitationInterface;
 use App\Model\MemberInterface;
 use App\Model\NameTrait;
@@ -36,7 +36,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
     uriTemplate: '/teams.{_format}',
     operations: [
         new API\Post(
-            input: TeamDto::class,
+            input: TeamInput::class,
             processor: CreateTeamProcessor::class,
         ),
     ],
@@ -55,7 +55,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         ),
         new API\Patch(
             security: 'is_granted(\'' . TeamVoter::IS_USER_OWNER . '\', object)',
-            input: TeamDto::class,
+            input: TeamInput::class,
             processor: UpdateTeamProcessor::class,
         ),
         new API\Delete(
@@ -85,13 +85,13 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
     ],
 )]
 #[ORM\Entity]
-final class Team implements TeamInterface
+class Team implements TeamInterface
 {
     use ResourceTrait;
     use NameTrait;
 
-    public const GROUP_READ = 'team:read';
-    public const GROUP_WRITE = 'team:write';
+    public const string GROUP_READ = 'team:read';
+    public const string GROUP_WRITE = 'team:write';
 
     /**
      * @var Collection<MemberInterface>

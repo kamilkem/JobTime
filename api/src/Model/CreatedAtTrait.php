@@ -14,12 +14,12 @@ declare(strict_types=1);
 namespace App\Model;
 
 use Carbon\CarbonInterface;
-use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 trait CreatedAtTrait
 {
-    #[Column(type: 'carbon_immutable')]
+    #[ORM\Column(type: 'carbon_immutable')]
     #[Groups(groups: [ResourceInterface::GROUP_READ])]
     protected ?CarbonInterface $createdAt = null;
 
