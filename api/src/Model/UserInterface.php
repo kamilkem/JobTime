@@ -24,7 +24,13 @@ interface UserInterface extends
     BaseUserInterface,
     PasswordAuthenticatedUserInterface
 {
-    public const ROLE_USER = 'ROLE_USER';
+    public const string GROUP_READ = 'user:read';
+    public const string GROUP_WRITE = 'user:write';
+
+    public const array AGGREGATE_READ_GROUPS = [self::GROUP_READ, ResourceInterface::GROUP_READ];
+    public const array AGGREGATE_WRITE_GROUPS = [self::GROUP_WRITE, ResourceInterface::GROUP_WRITE];
+
+    public const string ROLE_USER = 'ROLE_USER';
 
     public function getEmail(): string;
 

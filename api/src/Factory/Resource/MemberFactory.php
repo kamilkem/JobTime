@@ -18,7 +18,7 @@ use App\Model\MemberInterface;
 use App\Model\TeamInterface;
 use App\Model\UserInterface;
 
-class MemberFactory implements MemberFactoryInterface
+final readonly class MemberFactory extends AbstractResourceFactory implements MemberFactoryInterface
 {
     public function create(UserInterface $user, TeamInterface $team, bool $owner): MemberInterface
     {
@@ -30,6 +30,8 @@ class MemberFactory implements MemberFactoryInterface
 
         $user->addMember($member, false);
         $team->addMember($member, false);
+
+        $this->dispatchResourceWasCreatedEvent($member);
 
         return $member;
     }

@@ -16,10 +16,14 @@ namespace App\Factory\Resource;
 use App\Entity\Team;
 use App\Model\TeamInterface;
 
-final readonly class TeamFactory implements TeamFactoryInterface
+final readonly class TeamFactory extends AbstractResourceFactory implements TeamFactoryInterface
 {
     public function create(string $name): TeamInterface
     {
-        return new Team($name);
+        $team = new Team($name);
+
+        $this->dispatchResourceWasCreatedEvent($team);
+
+        return $team;
     }
 }

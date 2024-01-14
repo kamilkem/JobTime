@@ -14,15 +14,11 @@ declare(strict_types=1);
 namespace App\Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 trait IdentifiableTrait
 {
-    /**
-     * @var UuidInterface
-     */
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'NONE')]

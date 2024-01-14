@@ -16,6 +16,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata as API;
 use App\Model\InvitationInterface;
 use App\Model\InvitationStatusEnum;
+use App\Model\ResourceInterface;
 use App\Model\TeamInterface;
 use App\Model\UserInterface;
 use App\Model\UserResourceTrait;
@@ -41,10 +42,10 @@ use Symfony\Component\Validator\Constraints as Assert;
         'invitation' => new API\Link(fromClass: self::class),
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[API\ApiResource(
@@ -58,19 +59,16 @@ use Symfony\Component\Validator\Constraints as Assert;
         'team' => new API\Link(toProperty: 'team', fromClass: Team::class)
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[ORM\Entity]
 class Invitation implements InvitationInterface
 {
     use UserResourceTrait;
-
-    public const string GROUP_READ = 'invitation:read';
-    public const string GROUP_WRITE = 'invitation:write';
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]

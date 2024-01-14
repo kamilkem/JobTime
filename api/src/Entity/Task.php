@@ -16,6 +16,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata as API;
 use App\Model\DescriptionTrait;
 use App\Model\NameTrait;
+use App\Model\ResourceInterface;
 use App\Model\TaskInterface;
 use App\Model\TeamInterface;
 use App\Model\TimeEntryInterface;
@@ -48,10 +49,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         'task' => new API\Link(fromClass: self::class),
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[API\ApiResource(
@@ -68,10 +69,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         'view' => new API\Link(toProperty: 'view', fromClass: View::class),
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[API\ApiResource(
@@ -80,10 +81,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         new API\GetCollection()
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[ORM\Entity]
@@ -92,9 +93,6 @@ class Task implements TaskInterface
     use UserResourceTrait;
     use NameTrait;
     use DescriptionTrait;
-
-    public const string GROUP_READ = 'task:read';
-    public const string GROUP_WRITE = 'task:write';
 
     #[ORM\ManyToOne(targetEntity: View::class, cascade: ['persist'], inversedBy: 'tasks')]
     #[ORM\JoinColumn(nullable: false)]

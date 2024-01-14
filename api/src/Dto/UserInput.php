@@ -13,16 +13,15 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Entity\User;
 use App\Model\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 class UserInput implements InitializableDtoInterface
 {
-    #[Groups([User::GROUP_WRITE])]
+    #[Groups([UserInterface::GROUP_WRITE])]
     public string $firstName;
 
-    #[Groups([User::GROUP_WRITE])]
+    #[Groups([UserInterface::GROUP_WRITE])]
     public string $lastName;
 
     public static function initialize(object $fromObject): self

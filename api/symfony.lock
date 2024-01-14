@@ -144,9 +144,6 @@
             ".php-cs-fixer.dist.php"
         ]
     },
-    "friendsofphp/proxy-manager-lts": {
-        "version": "v1.0.5"
-    },
     "gesdinet/jwt-refresh-token-bundle": {
         "version": "1.2",
         "recipe": {
@@ -160,9 +157,6 @@
             "config/routes/gesdinet_jwt_refresh_token.yaml",
             "src/Entity/RefreshToken.php"
         ]
-    },
-    "laminas/laminas-code": {
-        "version": "4.5.1"
     },
     "laminas/laminas-eventmanager": {
         "version": "3.3.1"

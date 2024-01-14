@@ -19,7 +19,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 final readonly class JwtEventListener
 {
-    #[AsEventListener('lexik_jwt_authentication.on_jwt_created')]
+    #[AsEventListener(event: 'lexik_jwt_authentication.on_jwt_created')]
     public function onJWTCreated(JWTCreatedEvent $event): void
     {
         $user = $event->getUser();

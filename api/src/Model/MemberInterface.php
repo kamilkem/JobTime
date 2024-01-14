@@ -15,6 +15,12 @@ namespace App\Model;
 
 interface MemberInterface extends ResourceInterface
 {
+    public const string GROUP_READ = 'member:read';
+    public const string GROUP_WRITE = 'member:write';
+
+    public const array AGGREGATE_READ_GROUPS = [self::GROUP_READ, ResourceInterface::GROUP_READ];
+    public const array AGGREGATE_WRITE_GROUPS = [self::GROUP_WRITE, ResourceInterface::GROUP_WRITE];
+
     public function getUser(): ?UserInterface;
 
     public function setUser(UserInterface $user, bool $updateRelation = true): void;

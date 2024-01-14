@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace App\EventListener;
 
+use App\Event\ResourceWasCreatedEvent;
 use App\Http\Provider\CurrentUserProviderInterface;
 use App\Model\ResourceInterface;
 use App\Model\UserResourceInterface;
@@ -20,6 +21,7 @@ use Carbon\CarbonImmutable;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 #[AsDoctrineListener(Events::prePersist)]
 final readonly class ResourceEntityEventListener
@@ -32,12 +34,27 @@ final readonly class ResourceEntityEventListener
     {
         $object = $args->getObject();
 
-        if ($object instanceof ResourceInterface && !$object->getCreatedAt()) {
-            $object->setCreatedAt(CarbonImmutable::now());
+        if (!$object instanceof ResourceInterface) {
+            return;
         }
 
-        if ($object instanceof UserResourceInterface && !$object->getCreatedBy()) {
-            $object->setCreatedBy($this->currentUserProvider->getCurrentUser());
+        $this->initializeResource($object);
+    }
+
+    #[AsEventListener(event: ResourceWasCreatedEvent::class)]
+    public function onResourceWasCreated(ResourceWasCreatedEvent $event): void
+    {
+        $this->initializeResource($event->getResource());
+    }
+
+    private function initializeResource(ResourceInterface $resource): void
+    {
+        if (!$resource->getCreatedAt()) {
+            $resource->setCreatedAt(CarbonImmutable::now());
+        }
+
+        if ($resource instanceof UserResourceInterface && !$resource->getCreatedBy()) {
+            $resource->setCreatedBy($this->currentUserProvider->getCurrentUser());
         }
     }
 }

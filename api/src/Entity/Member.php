@@ -14,12 +14,15 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
+use App\Dto\MemberInput;
 use App\Model\MemberInterface;
+use App\Model\ResourceInterface;
 use App\Model\ResourceTrait;
 use App\Model\TeamInterface;
 use App\Model\UserInterface;
 use App\Security\TeamVoter;
 use App\State\TeamSubresourceCollectionProvider;
+use App\State\UpdateMemberProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -34,6 +37,8 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         ),
         new API\Patch(
             security: 'is_granted(\'' . TeamVoter::IS_USER_OWNER . '\', object.getTeam())',
+            input: MemberInput::class,
+            processor: UpdateMemberProcessor::class,
         ),
         new API\Delete(
             security: 'is_granted(\'' . TeamVoter::IS_USER_OWNER . '\', object.getTeam())',
@@ -43,10 +48,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         'member' => new API\Link(fromClass: self::class),
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[API\ApiResource(
@@ -60,10 +65,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         'team' => new API\Link(toProperty: 'team', fromClass: Team::class)
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[ORM\Entity]
@@ -73,7 +78,7 @@ class Member implements MemberInterface
 
     #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'members')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(groups: [self::GROUP_READ, self::GROUP_WRITE])]
+    #[Groups(groups: [self::GROUP_READ])]
     private UserInterface $user;
 
     #[ORM\ManyToOne(targetEntity: Team::class, cascade: ['persist'], inversedBy: 'members')]
@@ -82,11 +87,8 @@ class Member implements MemberInterface
     private TeamInterface $team;
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(groups: [self::GROUP_READ, self::GROUP_WRITE])]
+    #[Groups(groups: [self::GROUP_READ])]
     private bool $owner;
-
-    public const string GROUP_READ = 'member:read';
-    public const string GROUP_WRITE = 'member:write';
 
     public function __construct(
         UserInterface $user,
