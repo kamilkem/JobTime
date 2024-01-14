@@ -37,9 +37,6 @@ class Directory implements DirectoryInterface
     use NameTrait;
     use DescriptionTrait;
 
-    public const string GROUP_READ = 'directory:read';
-    public const string GROUP_WRITE = 'directory:write';
-
     #[ORM\ManyToOne(targetEntity: Space::class, cascade: ['persist'], inversedBy: 'directories')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull]

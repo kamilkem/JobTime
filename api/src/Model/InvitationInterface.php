@@ -17,6 +17,12 @@ use Carbon\CarbonInterface;
 
 interface InvitationInterface extends UserResourceInterface
 {
+    public const string GROUP_READ = 'invitation:read';
+    public const string GROUP_WRITE = 'invitation:write';
+
+    public const array AGGREGATE_READ_GROUPS = [self::GROUP_READ, ResourceInterface::GROUP_READ];
+    public const array AGGREGATE_WRITE_GROUPS = [self::GROUP_WRITE, ResourceInterface::GROUP_WRITE];
+
     public function getStatus(): InvitationStatusEnum;
 
     public function getInvitationEmail(): string;

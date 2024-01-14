@@ -24,7 +24,9 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerAwareTrait;
 
+use function get_object_vars;
 use function is_iterable;
+use function is_object;
 use function property_exists;
 use function sprintf;
 
@@ -41,21 +43,27 @@ class ItemNormalizerDecorator implements NormalizerInterface, DenormalizerInterf
     ) {
     }
 
-    public function denormalize(mixed $data, string $class, string $format = null, array $context = []): mixed
+    public function denormalize(mixed $data, string $type, string $format = null, array $context = []): mixed
     {
         $this->decorated->setSerializer($this->serializer);
 
-        $operation = $context['operation'];
+        $operation = $context['operation'] ?? null;
 
         if (!$operation instanceof Patch || !$operation->getInput() || !is_iterable($data)) {
-            return $this->decorated->denormalize($data, $class, $format, $context);
+            return $this->decorated->denormalize($data, $type, $format, $context);
         }
 
         foreach ($this->processors as $processor) {
             if ($processor::class === $operation->getProcessor()) {
-                $initializedObject = $processor->initialize($data, $class, $format, $context);
+                $serializedObject = $this->decorated->denormalize($data, $type, $format, $context);
 
-                foreach ($data as $field => $value) {
+                if (!is_object($serializedObject)) {
+                    continue;
+                }
+
+                $initializedObject = $processor->initialize($data, $type, $format, $context);
+
+                foreach (get_object_vars($serializedObject) as $field => $value) {
                     if (property_exists($initializedObject, $field)) {
                         try {
                             $initializedObject->$field = $value;
@@ -71,12 +79,12 @@ class ItemNormalizerDecorator implements NormalizerInterface, DenormalizerInterf
             }
         }
 
-        return $this->decorated->denormalize($data, $class, $format, $context);
+        return $this->decorated->denormalize($data, $type, $format, $context);
     }
 
-    public function supportsDenormalization(mixed $data, string $class, string $format = null, array $context = []): bool
+    public function supportsDenormalization(mixed $data, string $type, string $format = null, array $context = []): bool
     {
-        return $this->decorated->supportsDenormalization($data, $class, $format, $context);
+        return $this->decorated->supportsDenormalization($data, $type, $format, $context);
     }
 
     public function normalize(mixed $object, string $format = null, array $context = []): mixed

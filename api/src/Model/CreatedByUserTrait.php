@@ -22,7 +22,7 @@ trait CreatedByUserTrait
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
     #[Groups(ResourceInterface::GROUP_READ)]
-    protected ?UserInterface $createdBy;
+    protected ?UserInterface $createdBy = null;
 
     public function getCreatedBy(): ?UserInterface
     {

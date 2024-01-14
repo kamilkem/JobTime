@@ -47,7 +47,6 @@ class TeamVoter extends Voter
             return false;
         }
 
-
         return match ($attribute) {
             self::IS_USER_OWNER => $subject->isUserOwner($user),
             self::IS_USER_MEMBER => $subject->isUserMember($user),

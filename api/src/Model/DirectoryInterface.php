@@ -17,6 +17,12 @@ use Doctrine\Common\Collections\Collection;
 
 interface DirectoryInterface extends UserResourceInterface, NameInterface
 {
+    public const string GROUP_READ = 'directory:read';
+    public const string GROUP_WRITE = 'directory:write';
+
+    public const array AGGREGATE_READ_GROUPS = [self::GROUP_READ, ResourceInterface::GROUP_READ];
+    public const array AGGREGATE_WRITE_GROUPS = [self::GROUP_WRITE, ResourceInterface::GROUP_WRITE];
+
     public function getTeam(): TeamInterface;
 
     public function getSpace(): SpaceInterface;

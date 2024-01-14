@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Entity\Team;
 use App\Model\TeamInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -21,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class TeamInput implements InitializableDtoInterface
 {
     #[Assert\Type(type: ['string'])]
-    #[Groups([Team::GROUP_WRITE])]
+    #[Groups([TeamInterface::GROUP_WRITE])]
     public string $name;
 
     public static function initialize(object $fromObject): self

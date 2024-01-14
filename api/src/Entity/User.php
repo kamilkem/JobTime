@@ -17,10 +17,9 @@ use ApiPlatform\Metadata as API;
 use App\Dto\UserInput;
 use App\Model\InvitationInterface;
 use App\Model\MemberInterface;
+use App\Model\ResourceInterface;
 use App\Model\ResourceTrait;
 use App\Model\UserInterface;
-use App\Repository\UserRepository;
-use App\Repository\UserRepositoryInterface;
 use App\Security\UserVoter;
 use App\State\UpdateUserProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -43,18 +42,18 @@ use function in_array;
             input: UserInput::class,
             processor: UpdateUserProcessor::class,
         ),
-        new API\Delete(
-            security: 'is_granted(\'' . UserVoter::IS_USER_INSTANCE . '\', object)',
-        ),
+    //        new API\Delete(
+    //            security: 'is_granted(\'' . UserVoter::IS_USER_INSTANCE . '\', object)',
+    //        ),
     ],
     uriVariables: [
         'user' => new API\Link(fromClass: self::class),
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ],
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE],
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[ORM\Entity]
@@ -62,9 +61,6 @@ use function in_array;
 class User implements UserInterface
 {
     use ResourceTrait;
-
-    public const string GROUP_READ = 'user:read';
-    public const string GROUP_WRITE = 'user:write';
 
     #[ORM\Column(type: 'string')]
     #[Groups([self::GROUP_READ])]

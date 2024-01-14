@@ -18,6 +18,12 @@ use Doctrine\Common\Collections\Collection;
 
 interface TeamInterface extends ResourceInterface, OwnableInterface, NameInterface
 {
+    public const string GROUP_READ = 'team:read';
+    public const string GROUP_WRITE = 'team:write';
+
+    public const array AGGREGATE_READ_GROUPS = [self::GROUP_READ, ResourceInterface::GROUP_READ];
+    public const array AGGREGATE_WRITE_GROUPS = [self::GROUP_WRITE, ResourceInterface::GROUP_WRITE];
+
     /**
      * @return Collection<MemberInterface>
      */

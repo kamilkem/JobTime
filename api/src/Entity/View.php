@@ -36,9 +36,6 @@ class View implements ViewInterface
     use NameTrait;
     use DescriptionTrait;
 
-    public const string GROUP_READ = 'view:read';
-    public const string GROUP_WRITE = 'view:write';
-
     #[ORM\ManyToOne(targetEntity: Directory::class, cascade: ['persist'], inversedBy: 'views')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(groups: [self::GROUP_READ])]

@@ -17,6 +17,12 @@ use Doctrine\Common\Collections\Collection;
 
 interface SpaceInterface extends UserResourceInterface, NameInterface, DescriptionInterface
 {
+    public const string GROUP_READ = 'space:read';
+    public const string GROUP_WRITE = 'space:write';
+
+    public const array AGGREGATE_READ_GROUPS = [self::GROUP_READ, ResourceInterface::GROUP_READ];
+    public const array AGGREGATE_WRITE_GROUPS = [self::GROUP_WRITE, ResourceInterface::GROUP_WRITE];
+
     public function getTeam(): TeamInterface;
 
     public function setTeam(TeamInterface $team, bool $updateRelation = true): void;

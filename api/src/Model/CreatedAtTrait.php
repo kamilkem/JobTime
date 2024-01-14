@@ -31,7 +31,7 @@ trait CreatedAtTrait
     public function setCreatedAt(CarbonInterface $createdAt): void
     {
         if ($this->createdAt) {
-            throw new \LogicException();
+            throw new \LogicException('This property can\'t be initialized twice.');
         }
 
         $this->createdAt = $createdAt;

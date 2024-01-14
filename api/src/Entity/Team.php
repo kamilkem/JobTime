@@ -18,6 +18,7 @@ use App\Dto\TeamInput;
 use App\Model\InvitationInterface;
 use App\Model\MemberInterface;
 use App\Model\NameTrait;
+use App\Model\ResourceInterface;
 use App\Model\ResourceTrait;
 use App\Model\SpaceInterface;
 use App\Model\TeamInterface;
@@ -41,10 +42,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         ),
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[API\ApiResource(
@@ -66,10 +67,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         'team' => new API\Link(fromClass: self::class)
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[API\ApiResource(
@@ -78,10 +79,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         new API\GetCollection(),
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[ORM\Entity]
@@ -90,8 +91,8 @@ class Team implements TeamInterface
     use ResourceTrait;
     use NameTrait;
 
-    public const string GROUP_READ = 'team:read';
-    public const string GROUP_WRITE = 'team:write';
+    public const array AGGREGATE_READ_GROUPS = [self::GROUP_READ, ResourceInterface::GROUP_READ];
+    public const array AGGREGATE_WRITE_GROUPS = [self::GROUP_WRITE, ResourceInterface::GROUP_WRITE];
 
     /**
      * @var Collection<MemberInterface>

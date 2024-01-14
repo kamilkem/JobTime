@@ -14,14 +14,20 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata as API;
+use App\Dto\SpaceInput;
 use App\Model\DescriptionTrait;
 use App\Model\DirectoryInterface;
 use App\Model\NameTrait;
+use App\Model\ResourceInterface;
 use App\Model\SpaceInterface;
 use App\Model\TeamInterface;
 use App\Model\UserResourceTrait;
 use App\Security\TeamVoter;
+use App\State\CreateSpaceProcessor;
 use App\State\TeamSubresourceCollectionProvider;
+use App\State\UpdateSpaceProcessor;
+use App\State\UpdateTeamProcessor;
+use Carbon\CarbonImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,26 +37,44 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 #[API\ApiResource(
+    uriTemplate: '/spaces.{_format}',
+    operations: [
+        new API\Post(
+            securityPostDenormalize: 'is_granted(\'' . TeamVoter::IS_USER_MEMBER . '\', object.team)',
+            input: SpaceInput::class,
+            processor: CreateSpaceProcessor::class,
+        ),
+    ],
+    normalizationContext: [
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
+    ],
+    denormalizationContext: [
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
+    ],
+)]
+#[API\ApiResource(
     uriTemplate: '/spaces/{space}.{_format}',
     operations: [
         new API\Get(
             security: 'is_granted(\'' . TeamVoter::IS_USER_MEMBER . '\', object.getTeam())',
         ),
         new API\Patch(
-            security: 'is_granted(\'' . TeamVoter::IS_USER_OWNER . '\', object.getTeam())',
+            security: 'is_granted(\'' . TeamVoter::IS_USER_MEMBER . '\', object.getTeam())',
+            input: SpaceInput::class,
+            processor: UpdateSpaceProcessor::class,
         ),
         new API\Delete(
-            security: 'is_granted(\'' . TeamVoter::IS_USER_OWNER . '\', object.getTeam())',
+            security: 'is_granted(\'' . TeamVoter::IS_USER_MEMBER . '\', object.getTeam())',
         )
     ],
     uriVariables: [
         'space' => new API\Link(fromClass: self::class),
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[API\ApiResource(
@@ -64,10 +88,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         'team' => new API\Link(toProperty: 'team', fromClass: Team::class)
     ],
     normalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_READ]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_READ_GROUPS,
     ],
     denormalizationContext: [
-        AbstractNormalizer::GROUPS => [self::GROUP_WRITE]
+        AbstractNormalizer::GROUPS => self::AGGREGATE_WRITE_GROUPS,
     ],
 )]
 #[ORM\Entity]
@@ -76,9 +100,6 @@ class Space implements SpaceInterface
     use UserResourceTrait;
     use NameTrait;
     use DescriptionTrait;
-
-    public const string GROUP_READ = 'space:read';
-    public const string GROUP_WRITE = 'space:write';
 
     #[ORM\ManyToOne(targetEntity: Team::class, cascade: ['persist'], inversedBy: 'spaces')]
     #[ORM\JoinColumn(nullable: false)]
@@ -103,7 +124,7 @@ class Space implements SpaceInterface
     public function __construct(
         TeamInterface $team,
         string $name,
-        ?string $description,
+        ?string $description = null,
         ?UuidInterface $id = null,
     ) {
         $this->team = $team;

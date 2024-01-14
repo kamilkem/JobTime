@@ -37,7 +37,7 @@ final class MemberFixtures extends Fixture implements DependentFixtureInterface
         /** @var TeamInterface $team */
         $team = $this->getReference(TeamFixtures::REFERENCE_NAME);
 
-        for ($i = 0; $i < UserFixtures::COUNT; $i++) {
+        for ($i = 0; $i < UserFixtures::COUNT / 2; $i++) {
             /** @var UserInterface $user */
             $user = $this->getReference($this->createReferenceName(UserFixtures::REFERENCE_NAME, $i));
 
