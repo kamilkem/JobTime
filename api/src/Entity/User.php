@@ -17,7 +17,6 @@ use ApiPlatform\Metadata as API;
 use App\Dto\UserInput;
 use App\Model\InvitationInterface;
 use App\Model\MemberInterface;
-use App\Model\ResourceInterface;
 use App\Model\ResourceTrait;
 use App\Model\UserInterface;
 use App\Security\UserVoter;

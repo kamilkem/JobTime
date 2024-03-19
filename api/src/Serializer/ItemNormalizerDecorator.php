@@ -39,8 +39,9 @@ class ItemNormalizerDecorator implements NormalizerInterface, DenormalizerInterf
         private readonly AbstractItemNormalizer $decorated,
         /** @var iterable<InitializableProcessorInterface> */
         #[TaggedIterator(tag: 'app_initializable_processor')]
-        private readonly iterable $processors
-    ) {
+        private readonly iterable               $processors
+    )
+    {
     }
 
     public function denormalize(mixed $data, string $type, string $format = null, array $context = []): mixed
@@ -54,29 +55,33 @@ class ItemNormalizerDecorator implements NormalizerInterface, DenormalizerInterf
         }
 
         foreach ($this->processors as $processor) {
-            if ($processor::class === $operation->getProcessor()) {
-                $serializedObject = $this->decorated->denormalize($data, $type, $format, $context);
+            if ($processor::class !== $operation->getProcessor()) {
+                continue;
+            }
 
-                if (!is_object($serializedObject)) {
+            $serializedObject = $this->decorated->denormalize($data, $type, $format, $context);
+
+            if (!is_object($serializedObject)) {
+                continue;
+            }
+
+            $initializedObject = $processor->initialize($data, $type, $format, $context);
+
+            foreach (get_object_vars($serializedObject) as $field => $value) {
+                if (!property_exists($initializedObject, $field)) {
                     continue;
                 }
 
-                $initializedObject = $processor->initialize($data, $type, $format, $context);
-
-                foreach (get_object_vars($serializedObject) as $field => $value) {
-                    if (property_exists($initializedObject, $field)) {
-                        try {
-                            $initializedObject->$field = $value;
-                        } catch (\TypeError) {
-                            throw new UnprocessableEntityHttpException(
-                                sprintf('The field "%s" was not expected.', $field)
-                            );
-                        }
-                    }
+                try {
+                    $initializedObject->$field = $value;
+                } catch (\TypeError) {
+                    throw new UnprocessableEntityHttpException(
+                        sprintf('The field "%s" was not expected.', $field)
+                    );
                 }
-
-                return $initializedObject;
             }
+
+            return $initializedObject;
         }
 
         return $this->decorated->denormalize($data, $type, $format, $context);
@@ -87,7 +92,7 @@ class ItemNormalizerDecorator implements NormalizerInterface, DenormalizerInterf
         return $this->decorated->supportsDenormalization($data, $type, $format, $context);
     }
 
-    public function normalize(mixed $object, string $format = null, array $context = []): mixed
+    public function normalize(mixed $object, string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         $this->decorated->setSerializer($this->serializer);
 
