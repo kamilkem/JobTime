@@ -39,9 +39,8 @@ class ItemNormalizerDecorator implements NormalizerInterface, DenormalizerInterf
         private readonly AbstractItemNormalizer $decorated,
         /** @var iterable<InitializableProcessorInterface> */
         #[TaggedIterator(tag: 'app_initializable_processor')]
-        private readonly iterable               $processors
-    )
-    {
+        private readonly iterable $processors
+    ) {
     }
 
     public function denormalize(mixed $data, string $type, string $format = null, array $context = []): mixed

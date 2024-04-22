@@ -76,12 +76,12 @@ final readonly class DateTimeNormalizerDecorator implements NormalizerInterface,
     public function getSupportedTypes(?string $format): array
     {
         return [
-            DateTimeInterface::class,
-            DateTimeImmutable::class,
-            DateTime::class,
-            CarbonInterface::class,
-            CarbonImmutable::class,
-            Carbon::class,
+            DateTimeInterface::class => true,
+            DateTimeImmutable::class => true,
+            DateTime::class => true,
+            CarbonInterface::class => true,
+            CarbonImmutable::class => true,
+            Carbon::class => true,
         ];
     }
 }
